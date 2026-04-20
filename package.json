@@ -3,16 +3,21 @@
   "publisher": "purple-vision",
   "displayName": "Braindump — Notes for VS Code",
   "description": "Plain-text .bd note-taking with its own color palette (dark/light auto-selected), an outline view, mention completion, callout cycling, and a status bar counter.",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "icon": "images/logo.jpg",
   "main": "./dist/extension.js",
   "keywords": [
     "notes",
-    "markdown",
-    "braindump",
-    "bd",
     "note-taking",
-    "pkm"
+    "braindump",
+    "todo",
+    "tasks",
+    "outline",
+    "journal",
+    "plain-text",
+    "pkm",
+    "zettelkasten",
+    "markdown"
   ],
   "homepage": "https://github.com/sweetlemonai/braindump-vscode#readme",
   "repository": {
