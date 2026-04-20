@@ -1,0 +1,10 @@
+dist/
+out/
+node_modules/
+themes/
+syntaxes/
+src/workbench/
+src/*.mjs
+src/test/grammar/
+images/
+*.vsix

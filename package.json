@@ -1,0 +1,147 @@
+{
+  "name": "braindump",
+  "publisher": "purple-vision",
+  "displayName": "Braindump — Notes for VS Code",
+  "description": "Plain-text .bd note-taking with syntax highlighting that works in any theme, an outline view, mention completion, callout cycling, and a status bar counter.",
+  "version": "1.0.0",
+  "icon": "images/logo.jpg",
+  "main": "./dist/extension.js",
+  "keywords": [
+    "notes",
+    "markdown",
+    "braindump",
+    "bd",
+    "note-taking",
+    "pkm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sweetlemonai/braindump-vscode.git"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Themes",
+    "Other"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "braindump",
+        "aliases": [
+          "braindump",
+          "bd",
+          "brain dump"
+        ],
+        "extensions": [
+          ".bd"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "braindump",
+        "scopeName": "source.bd",
+        "path": "./syntaxes/braindump.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "braindump",
+        "path": "./snippets/braindump.json"
+      }
+    ],
+    "themes": [
+      {
+        "label": "Braindump Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/braindump-dark.json"
+      },
+      {
+        "label": "Braindump Light",
+        "uiTheme": "vs",
+        "path": "./themes/braindump-light.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "braindump.cycleAnnotation",
+        "title": "Braindump: Cycle Callout Annotation"
+      },
+      {
+        "command": "braindump.showCallouts",
+        "title": "Braindump: Show Callouts"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "braindump.cycleAnnotation",
+        "key": "ctrl+enter",
+        "mac": "cmd+enter",
+        "when": "editorLangId == braindump && editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "Braindump",
+      "properties": {
+        "braindump.statusBar.track": {
+          "type": "string",
+          "enum": ["questions", "important", "starred", "off"],
+          "enumDescriptions": [
+            "Count '?' / '??' / '???' lines.",
+            "Count '!' lines.",
+            "Count '*' / '**' / '***' lines.",
+            "Hide the status bar item."
+          ],
+          "default": "questions",
+          "description": "Which construct the Braindump status bar tracks in .bd files."
+        },
+        "braindump.statusBar.scope": {
+          "type": "string",
+          "enum": ["file", "workspace", "off"],
+          "enumDescriptions": [
+            "Count only in the active file.",
+            "Show 'file count / workspace count'.",
+            "Hide the status bar item."
+          ],
+          "default": "file",
+          "description": "Scope of the Braindump status bar count."
+        }
+      }
+    }
+  },
+  "galleryBanner": {
+    "color": "#1b1b1f",
+    "theme": "dark"
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build:themes && npm run compile -- --production",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "build:themes": "tsx scripts/build-themes.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.ts\"",
+    "format": "prettier --write .",
+    "test:grammar": "vscode-tmgrammar-test -g syntaxes/braindump.tmLanguage.json \"src/test/grammar/*.bd\"",
+    "test:unit": "vitest run",
+    "test": "npm run test:grammar && npm run test:unit",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vscode/vsce": "^2.24.0",
+    "esbuild": "^0.20.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0",
+    "vscode-tmgrammar-test": "^0.1.3"
+  }
+}

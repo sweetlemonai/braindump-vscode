@@ -1,0 +1,17 @@
+// SYNTAX TEST "source.bd" "line comments"
+
+// a comment line
+// <- comment.line.double-slash.bd
+// <-- punctuation.definition.comment.bd
+//^^^^^^^^^^^^^^^^ comment.line.double-slash.bd
+
+//no-space comment
+// <- comment.line.double-slash.bd
+//^^^^^^^^^^^^^^^^^ comment.line.double-slash.bd
+
+http://example.com
+// <- markup.underline.link.bd
+//^^^^^^^^^^^^^^^^^ - comment.line.double-slash.bd
+
+/// triple-slash is not a comment
+// <- - comment.line.double-slash.bd

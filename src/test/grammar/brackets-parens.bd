@@ -1,0 +1,19 @@
+// SYNTAX TEST "source.bd" "line-level parens, brackets, braces"
+
+(Parentheses) trailing text
+// <- meta.parens.line.bd
+//^^^^^^^^^^^^^^^^^^^^^^^^^ meta.parens.line.bd
+
+[array, of, items] trailing text
+// <- meta.brackets.line.bd
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.brackets.line.bd
+
+{curly brackets} trailing text
+// <- meta.braces.line.bd
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.braces.line.bd
+
+met John (the CTO) today
+//       ^ - meta.parens.line.bd
+
+ship by Friday [maybe]
+//             ^ - meta.brackets.line.bd

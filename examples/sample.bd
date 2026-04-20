@@ -1,0 +1,69 @@
+// Sample braindump note — exercises every construct for theme review.
+
+# Trip planning (2026-04-19)
+## Logistics
+### Flights
+### Hotels
+
+= People
+== Core
+=== Extended
+
++ Day 1
+++ Morning
++++ Early coffee
+
+- pack charger
+-- include USB-C
+--- grab extra cable
+
+* priority item 1
+** priority item 2
+*** priority item 3
+
+? should we book refundable?
+?? open thread on cancellations
+??? parking fee estimate
+
+! deadline Friday
+
+@ alice
+Contact @bob about the meeting, cc @carol-smith please.
+Email foo@bar.com (shouldn't highlight as mention).
+
+> send update to team
+>> cc leads
+>>> bcc eng-all
+
+< fetch latest from origin
+<< pull requests
+<<< release branch
+
+// TODO: confirm cost estimate
+// comment without space before it? try //no-space
+/// triple slash is not a comment
+
+1. first deliverable
+2. second deliverable
+10. tenth item with a wider marker
+
+a. alpha item
+b. beta item
+
+_ underscore label
+__ double-underscore label
+
+name: braindump
+status: in-progress
+url: https://example.com/docs
+
+lorem "ipsum" dolor sit 'amet', consectetur `adipisicing` elit.
+
+(Parentheses label on its own line)
+[Bracket label here]
+{Brace label here}
+
+Meeting notes mid-line (with a parenthetical) that should stay plain.
+
+See https://example.com for details.
+Also https://docs.example.com/path?q=1 in prose.

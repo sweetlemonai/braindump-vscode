@@ -1,0 +1,30 @@
+// SYNTAX TEST "source.bd" "ordered and alpha lists"
+
+1. first numeric item
+// <- markup.list.numbered.bd
+// <- punctuation.definition.list.begin.numbered.bd
+// <-- punctuation.definition.list.begin.numbered.bd
+//  ^^^^^^^^^^^^^^^^^^ markup.list.numbered.bd
+
+10. double-digit marker
+// <- markup.list.numbered.bd
+// <--- punctuation.definition.list.begin.numbered.bd
+
+a. first alpha item
+// <- markup.list.alpha.bd
+//  ^^^^^^^^^^^^^^^^ markup.list.alpha.bd
+
+b. second alpha item
+// <- markup.list.alpha.bd
+
+see item 3. mid-line should not trigger
+//       ^ - markup.list.numbered.bd
+
+hello.
+// <- - markup.list.alpha.bd
+
+abbr.
+// <- - markup.list.alpha.bd
+
+a.
+// <- - markup.list.alpha.bd

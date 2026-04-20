@@ -1,0 +1,37 @@
+{
+  "Today": {
+    "prefix": "today",
+    "body": "$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE",
+    "description": "Insert today's date as YYYY-MM-DD."
+  },
+  "Heading 1": {
+    "prefix": "h1",
+    "body": "# $0",
+    "description": "H1 heading scaffold."
+  },
+  "Heading 2": {
+    "prefix": "h2",
+    "body": "## $0",
+    "description": "H2 heading scaffold."
+  },
+  "Heading 3": {
+    "prefix": "h3",
+    "body": "### $0",
+    "description": "H3 heading scaffold."
+  },
+  "Question": {
+    "prefix": "q",
+    "body": "? $0",
+    "description": "Question callout."
+  },
+  "Important": {
+    "prefix": "imp",
+    "body": "! $0",
+    "description": "Important callout."
+  },
+  "Key-Value": {
+    "prefix": "kv",
+    "body": "$1: $0",
+    "description": "Key-value pair; cursor starts on the key."
+  }
+}

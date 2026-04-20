@@ -1,0 +1,62 @@
+// SYNTAX TEST "source.bd" "line starters - tier 2 (levels 2/3, starred, underscore)"
+
+== Category 2
+// <- markup.heading.category.2.bd
+//  ^^^^^^^^^^ markup.heading.category.2.bd
+
+=== Category 3
+// <- markup.heading.category.3.bd
+//   ^^^^^^^^^^ markup.heading.category.3.bd
+
+++ Section 2
+// <- markup.heading.section.2.bd
+//  ^^^^^^^^^ markup.heading.section.2.bd
+
++++ Section 3
+// <- markup.heading.section.3.bd
+//   ^^^^^^^^^ markup.heading.section.3.bd
+
+-- Item 2
+// <-- punctuation.definition.list.begin.2.bd
+// <- markup.list.unnumbered.2.bd
+//  ^^^^^^ markup.list.unnumbered.2.bd
+
+--- Item 3
+// <--- punctuation.definition.list.begin.3.bd
+// <- markup.list.unnumbered.3.bd
+//   ^^^^^^ markup.list.unnumbered.3.bd
+
+* Starred 1
+// <- keyword.other.annotation.starred.bd
+
+** Starred 2
+// <-- keyword.other.annotation.starred.2.bd
+
+*** Starred 3
+// <--- keyword.other.annotation.starred.3.bd
+
+?? Question 2
+// <-- keyword.other.annotation.question.2.bd
+
+??? Question 3
+// <--- keyword.other.annotation.question.3.bd
+
+>> Command out 2
+// <-- keyword.other.command.out.2.bd
+
+>>> Command out 3
+// <--- keyword.other.command.out.3.bd
+
+<< Command in 2
+// <-- keyword.other.command.in.2.bd
+
+<<< Command in 3
+// <--- keyword.other.command.in.3.bd
+
+_ Underscore
+// <- markup.other.underscore.bd
+//  ^^^^^^^^^^ markup.other.underscore.bd
+
+__ Double underscore
+// <- markup.other.double-underscore.bd
+//   ^^^^^^^^^^^^^^^^^ markup.other.double-underscore.bd
