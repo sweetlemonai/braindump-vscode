@@ -10,7 +10,7 @@ You might be thinking: that sounds like Markdown. The difference is that **Brain
 
 That one choice shapes everything about how Braindump works. It's meant for people who want to write notes fast, scroll through them later, and never think about "edit mode" vs "reading mode." Open a `.bd` file, type, close it. That's the whole loop.
 
-![Braindump Dark](images/dark.png)
+![Braindump Dark](https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/dark.png)
 
 ## Getting started
 
@@ -114,7 +114,7 @@ Braindump works in any VS Code theme you already use. Whatever you read code in 
 
 Two extra themes ship alongside, tuned specifically for `.bd` files. Press `Cmd+K Cmd+T` (Mac) or `Ctrl+K Ctrl+T` (Windows/Linux) and pick `Braindump Dark` or `Braindump Light` to try them.
 
-![Braindump Light](images/light.png)
+![Braindump Light](https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/light.png)
 
 ## Keyboard shortcuts
 
