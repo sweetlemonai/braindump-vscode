@@ -3,7 +3,7 @@
   "publisher": "purple-vision",
   "displayName": "Braindump — Notes for VS Code",
   "description": "Plain-text .bd note-taking with its own color palette (dark/light auto-selected), an outline view, mention completion, callout cycling, and a status bar counter.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "icon": "images/logo.jpg",
   "main": "./dist/extension.js",
   "keywords": [

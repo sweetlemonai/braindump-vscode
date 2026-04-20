@@ -142,7 +142,7 @@ All under `braindump.*` in VS Code settings:
 
 ## Issues and feedback
 
-Report issues at [github.com/massihx/braindump-extension](https://github.com/sweetlemonai/braindump-vscode).
+Report issues at [github.com/sweetlemonai/braindump-vscode](https://github.com/sweetlemonai/braindump-vscode).
 
 Release notes: [CHANGELOG.md](CHANGELOG.md).
 

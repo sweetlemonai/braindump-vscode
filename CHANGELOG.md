@@ -3,6 +3,14 @@
 All notable changes to the Braindump extension are documented here. Format
 follows [Keep a Changelog](https://keepachangelog.com/).
 
+## 1.1.1 — 2026-04-20
+
+### Fixed
+
+- README "Issues and feedback" link now points to the current repo
+  (`sweetlemonai/braindump-vscode`) instead of the stale
+  `massihx/braindump-extension` URL.
+
 ## 1.1.0 — 2026-04-20
 
 ### Added
