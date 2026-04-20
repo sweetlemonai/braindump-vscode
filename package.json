@@ -14,9 +14,13 @@
     "note-taking",
     "pkm"
   ],
+  "homepage": "https://github.com/sweetlemonai/braindump-vscode#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/sweetlemonai/braindump-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sweetlemonai/braindump-vscode/issues"
   },
   "engines": {
     "vscode": "^1.85.0"
