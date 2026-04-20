@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   aggregateMentions,
+  parseConstructs,
   parseMarkerLine,
   parseMarkers,
   parseMentions,
@@ -208,5 +209,94 @@ describe('aggregateMentions', () => {
       { name: 'alice', lineNumber: 1, column: 0 },
     ];
     expect(aggregateMentions([fileA])).toEqual([{ name: 'Alice', count: 2 }]);
+  });
+});
+
+describe('parseConstructs', () => {
+  it('returns an empty array for empty input', () => {
+    expect(parseConstructs('')).toEqual([]);
+  });
+
+  it('emits a heading1 range spanning the whole line', () => {
+    const line = '# Hello';
+    const ranges = parseConstructs(line);
+    expect(ranges).toContainEqual({
+      kind: 'heading1',
+      line: 0,
+      startChar: 0,
+      endChar: line.length,
+    });
+  });
+
+  it('distinguishes heading levels by level suffix', () => {
+    const input = '# one\n## two\n### three';
+    const kinds = parseConstructs(input).map((r) => r.kind);
+    expect(kinds).toEqual(['heading1', 'heading2', 'heading3']);
+  });
+
+  it('matches categories, sections, and callouts', () => {
+    const input = '= cat\n+ sec\n? q\n! im\n* star';
+    const kinds = parseConstructs(input).map((r) => r.kind);
+    expect(kinds).toEqual(['category1', 'section1', 'question1', 'admiration', 'starred1']);
+  });
+
+  it('matches three-level command.in and command.out', () => {
+    const input = '> one\n>> two\n>>> three\n< four\n<< five\n<<< six';
+    const kinds = parseConstructs(input).map((r) => r.kind);
+    expect(kinds).toEqual([
+      'commandOut1',
+      'commandOut2',
+      'commandOut3',
+      'commandIn1',
+      'commandIn2',
+      'commandIn3',
+    ]);
+  });
+
+  it('matches comments with correct line range', () => {
+    const line = '  // a note';
+    const ranges = parseConstructs(line);
+    expect(ranges).toEqual([
+      { kind: 'comment', line: 0, startChar: 0, endChar: line.length },
+    ]);
+  });
+
+  it('emits inline mentions with column-accurate ranges', () => {
+    const line = 'Ping @bob please';
+    const mentions = parseConstructs(line).filter((r) => r.kind === 'mention');
+    expect(mentions).toEqual([
+      { kind: 'mention', line: 0, startChar: 5, endChar: 9 },
+    ]);
+  });
+
+  it('emits a mention range for line-start @ name form', () => {
+    const line = '@ alice';
+    const ranges = parseConstructs(line);
+    expect(ranges).toEqual([
+      { kind: 'mention', line: 0, startChar: 0, endChar: line.length },
+    ]);
+  });
+
+  it('emits link ranges covering the URL only', () => {
+    const line = 'see http://example.com/x for details';
+    const links = parseConstructs(line).filter((r) => r.kind === 'link');
+    expect(links).toEqual([
+      { kind: 'link', line: 0, startChar: 4, endChar: 24 },
+    ]);
+  });
+
+  it('tracks line numbers across CRLF input', () => {
+    const input = '# one\r\n## two\r\n';
+    const ranges = parseConstructs(input);
+    expect(ranges[0].line).toBe(0);
+    expect(ranges[1].line).toBe(1);
+  });
+
+  it('does not emit any construct for plain prose', () => {
+    expect(parseConstructs('just regular text on a line')).toEqual([]);
+  });
+
+  it('does not match mid-line markers', () => {
+    expect(parseConstructs('see # inline')).toEqual([]);
   });
 });

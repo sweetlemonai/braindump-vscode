@@ -3,6 +3,25 @@
 All notable changes to the Braindump extension are documented here. Format
 follows [Keep a Changelog](https://keepachangelog.com/).
 
+## 1.1.0 — 2026-04-20
+
+### Added
+
+- Fixed Braindump color palette for `.bd` files. Colors no longer depend
+  on the active VS Code theme — the extension paints its own palette via
+  editor decorations. Dark and light variants auto-select based on the
+  current VS Code color mode.
+
+### Changed
+
+- Extension is no longer categorized as a theme pack, so installing it
+  no longer prompts you to change your VS Code theme.
+
+### Removed
+
+- Bundled `Braindump Dark` and `Braindump Light` themes. Use any VS Code
+  theme you like; `.bd` files keep their own colors regardless.
+
 ## 1.0.0 — 2026-04-20
 
 Full rewrite. `.bd` highlighting now works in **any** theme, the bundled

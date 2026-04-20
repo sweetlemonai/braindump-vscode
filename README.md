@@ -10,7 +10,9 @@ You might be thinking: that sounds like Markdown. The difference is that **Brain
 
 That one choice shapes everything about how Braindump works. It's meant for people who want to write notes fast, scroll through them later, and never think about "edit mode" vs "reading mode." Open a `.bd` file, type, close it. That's the whole loop.
 
-![Braindump Dark](https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/dark.png)
+Braindump paints `.bd` files its own way — a dark or light palette picked automatically from your VS Code color mode — so your notes look the same no matter which theme you use for code.
+
+![Braindump dark palette](https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/dark.png)
 
 ## Getting started
 
@@ -108,13 +110,7 @@ Shortcuts that expand when you type them and press Tab:
 | `imp` | `! ` |
 | `kv` | `key: value` with tab stops on the key and value |
 
-## Themes
-
-Braindump works in any VS Code theme you already use. Whatever you read code in will color `.bd` files too.
-
-Two extra themes ship alongside, tuned specifically for `.bd` files. Press `Cmd+K Cmd+T` (Mac) or `Ctrl+K Ctrl+T` (Windows/Linux) and pick `Braindump Dark` or `Braindump Light` to try them.
-
-![Braindump Light](https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/light.png)
+![Braindump light palette](https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/light.png)
 
 ## Keyboard shortcuts
 
@@ -134,7 +130,7 @@ All under `braindump.*` in VS Code settings:
 
 ## Troubleshooting
 
-**Colors look wrong in my theme.** Open the command palette and run `Developer: Inspect Editor Tokens and Scopes`. Click any token — the panel tells you which scope the grammar emitted and which theme rule matched. If a scope is missing or the theme rule looks surprising, file an issue with that output and the theme name.
+**Colors look wrong.** Braindump paints `.bd` files with its own palette — dark or light, picked from your VS Code color mode — so changing themes shouldn't affect the result. If a construct isn't getting the color you expect, file an issue with the line you typed and your VS Code color mode.
 
 **My note isn't colored.** Look at the bottom-right of the status bar. If it says "Plain Text" instead of "Braindump," click it and pick "Braindump" from the list. Saving the file with a `.bd` extension should make this automatic.
 

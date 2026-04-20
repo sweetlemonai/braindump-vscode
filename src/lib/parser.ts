@@ -26,6 +26,40 @@ export interface MentionSummary {
   count: number;
 }
 
+export type ConstructKind =
+  | 'heading1'
+  | 'heading2'
+  | 'heading3'
+  | 'category1'
+  | 'category2'
+  | 'category3'
+  | 'section1'
+  | 'section2'
+  | 'section3'
+  | 'question1'
+  | 'question2'
+  | 'question3'
+  | 'admiration'
+  | 'starred1'
+  | 'starred2'
+  | 'starred3'
+  | 'commandIn1'
+  | 'commandIn2'
+  | 'commandIn3'
+  | 'commandOut1'
+  | 'commandOut2'
+  | 'commandOut3'
+  | 'mention'
+  | 'comment'
+  | 'link';
+
+export interface ConstructRange {
+  kind: ConstructKind;
+  line: number;
+  startChar: number;
+  endChar: number;
+}
+
 const LINE_START_MENTION = /^(\s*)@\s+([\w-]+)/;
 const INLINE_MENTION_GUARD = /(?<=^|[\s([{"',.:;])@([\w-]+)/g;
 
@@ -81,6 +115,83 @@ export function parseMentions(text: string): MentionOccurrence[] {
       out.push({ name: m[1], lineNumber: i, column: m.index });
     }
   }
+  return out;
+}
+
+const LINE_STARTER_PATTERNS: ReadonlyArray<readonly [ConstructKind, RegExp]> = [
+  ['heading3', /^\s*###[ \t]+\S.*$/],
+  ['heading2', /^\s*##[ \t]+\S.*$/],
+  ['heading1', /^\s*#[ \t]+\S.*$/],
+  ['category3', /^\s*===[ \t]+\S.*$/],
+  ['category2', /^\s*==[ \t]+\S.*$/],
+  ['category1', /^\s*=[ \t]+\S.*$/],
+  ['section3', /^\s*\+\+\+[ \t]+\S.*$/],
+  ['section2', /^\s*\+\+[ \t]+\S.*$/],
+  ['section1', /^\s*\+[ \t]+\S.*$/],
+  ['question3', /^\s*\?\?\?[ \t]+\S.*$/],
+  ['question2', /^\s*\?\?[ \t]+\S.*$/],
+  ['question1', /^\s*\?[ \t]+\S.*$/],
+  ['admiration', /^\s*![ \t]+\S.*$/],
+  ['starred3', /^\s*\*\*\*[ \t]+\S.*$/],
+  ['starred2', /^\s*\*\*[ \t]+\S.*$/],
+  ['starred1', /^\s*\*[ \t]+\S.*$/],
+  ['commandOut3', /^\s*>>>[ \t]+\S.*$/],
+  ['commandOut2', /^\s*>>[ \t]+\S.*$/],
+  ['commandOut1', /^\s*>[ \t]+\S.*$/],
+  ['commandIn3', /^\s*<<<[ \t]+\S.*$/],
+  ['commandIn2', /^\s*<<[ \t]+\S.*$/],
+  ['commandIn1', /^\s*<[ \t]+\S.*$/],
+  ['comment', /^\s*\/\/(?!\/).*$/],
+];
+
+const URL_PATTERN = /\bhttps?:\/\/[^\s<>"')]+/g;
+
+export function parseConstructs(text: string): ConstructRange[] {
+  const lines = text.split(/\r?\n/);
+  const out: ConstructRange[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    let lineKind: ConstructKind | null = null;
+    for (const [kind, regex] of LINE_STARTER_PATTERNS) {
+      if (regex.test(line)) {
+        lineKind = kind;
+        break;
+      }
+    }
+
+    if (!lineKind && /^\s*@[ \t]+\S.*$/.test(line)) {
+      lineKind = 'mention';
+    }
+
+    if (lineKind) {
+      out.push({ kind: lineKind, line: i, startChar: 0, endChar: line.length });
+    }
+
+    INLINE_MENTION_GUARD.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = INLINE_MENTION_GUARD.exec(line)) !== null) {
+      out.push({
+        kind: 'mention',
+        line: i,
+        startChar: m.index,
+        endChar: m.index + m[0].length,
+      });
+    }
+
+    URL_PATTERN.lastIndex = 0;
+    let u: RegExpExecArray | null;
+    while ((u = URL_PATTERN.exec(line)) !== null) {
+      out.push({
+        kind: 'link',
+        line: i,
+        startChar: u.index,
+        endChar: u.index + u[0].length,
+      });
+    }
+  }
+
   return out;
 }
 

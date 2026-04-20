@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { BraindumpDocumentSymbolProvider } from './features/outline';
 import { cycleLines } from './features/callout';
+import { BraindumpDecorator } from './features/decorations';
 import { BraindumpMentionCompletionProvider } from './features/mentionComplete';
 import { BraindumpStatusBar, STATUS_BAR_COMMAND, showCalloutsCommand } from './features/statusBar';
 import { WorkspaceIndex } from './lib/workspaceIndex';
@@ -12,6 +13,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   const statusBar = new BraindumpStatusBar(index);
   context.subscriptions.push(statusBar);
+
+  context.subscriptions.push(new BraindumpDecorator());
 
   context.subscriptions.push(
     vscode.languages.registerDocumentSymbolProvider(
