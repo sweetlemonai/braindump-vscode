@@ -97,3 +97,40 @@ export function registerBracketClickToggle(): vscode.Disposable {
     }
   });
 }
+
+/**
+ * Decorates task brackets with a pointer cursor so users get feedback that
+ * clicking the bracket does something. Reapplies on edit / editor change.
+ */
+const bracketHoverDecoration = vscode.window.createTextEditorDecorationType({
+  cursor: 'pointer',
+});
+
+function refreshBracketHover(editor: vscode.TextEditor | undefined): void {
+  if (!editor) return;
+  if (editor.document.languageId !== 'braindump') return;
+
+  const ranges: vscode.Range[] = [];
+  for (let n = 0; n < editor.document.lineCount; n++) {
+    const text = editor.document.lineAt(n).text;
+    const match = TASK_RE.exec(text);
+    if (!match) continue;
+    const start = match[1].length;
+    ranges.push(new vscode.Range(n, start, n, start + 3));
+  }
+  editor.setDecorations(bracketHoverDecoration, ranges);
+}
+
+export function registerBracketHoverCursor(context: vscode.ExtensionContext): void {
+  refreshBracketHover(vscode.window.activeTextEditor);
+
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor((editor) => refreshBracketHover(editor)),
+    vscode.workspace.onDidChangeTextDocument((event) => {
+      const editor = vscode.window.activeTextEditor;
+      if (editor && editor.document === event.document) {
+        refreshBracketHover(editor);
+      }
+    })
+  );
+}

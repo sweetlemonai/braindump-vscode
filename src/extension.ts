@@ -4,6 +4,7 @@ import {
   BraindumpTaskBodyLinkProvider,
   TOGGLE_COMMAND,
   registerBracketClickToggle,
+  registerBracketHoverCursor,
   toggleTask,
 } from './features/tasks';
 
@@ -18,6 +19,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand(TOGGLE_COMMAND, toggleTask),
     registerBracketClickToggle()
   );
+  registerBracketHoverCursor(context);
 }
 
 export function deactivate(): void {}
