@@ -466,3 +466,35 @@ Last lines, no trailing newline issues:
 - final bullet
 - and another
 - and one more
+
+
+
+
+[ ] open task one
+[ ] open task two
+[x] completed task
+[X] uppercase X also completed
+
+[ ] task with @mention inside
+[x] done task with https://url.com inline
+[ ] task with "quoted string" inside
+
+[Bracket label here]      ← bracket-line, NOT task
+[longer label content]    ← bracket-line, NOT task
+[a]                       ← bracket-line (single char other than x/X), NOT task
+[xy]                      ← bracket-line (more than one char), NOT task
+
+
+- alpha
+- bravo
+- charlie
+- delta
+- echo
+- foxtrot
+- golf
+- hotel
+
+(blank line above resets the zebra)
+
+- india
+- juliet

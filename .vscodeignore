@@ -1,9 +1,17 @@
 .vscode/**
+.vscode-test/**
 .claude/**
 .DS_Store
 **/.DS_Store
 .gitignore
 .prettierrc
 .prettierignore
+.github/**
 sample.bd
+src/**
+node_modules/**
+tsconfig.json
+esbuild.js
+**/*.ts
+**/*.map
 *.vsix
