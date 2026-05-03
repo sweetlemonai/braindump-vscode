@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/braindump.png" alt="Braindump logo" width="128" />
+  <img src="https://raw.githubusercontent.com/sweetlemonai/braindump-language/main/images/braindump.png" alt="Braindump logo" width="128" />
   <h1>Braindump</h1>
   <p><strong>A note-taking syntax for people who think in plain text.</strong></p>
 </div>
@@ -12,7 +12,7 @@ There's no preview mode. No compile step. What you type is what you read.
 
 Open a `.bd` file. Start typing. Your notes get color-coded as you go.
 
-![Braindump sample note in a dark theme](https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/note.png)
+![Braindump sample note in a dark theme](https://raw.githubusercontent.com/sweetlemonai/braindump-language/main/images/note.png)
 
 ## Why another note format?
 
@@ -30,7 +30,7 @@ Braindump isn't a Markdown replacement, a wiki, or a personal-knowledge-manageme
 
 Every Braindump file is built from a handful of line-leading markers and a few inline tokens. That's the whole language.
 
-![Braindump syntax rendered in a dark theme](https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/syntax.png)
+![Braindump syntax rendered in a dark theme](https://raw.githubusercontent.com/sweetlemonai/braindump-language/main/images/syntax.png)
 
 ### Structure
 
