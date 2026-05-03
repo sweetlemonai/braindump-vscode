@@ -191,9 +191,11 @@
     },
 
     "task": {
-      "match": "^\\s*(\\[[ xX]\\])(?=\\s|$)",
+      "match": "^\\s*(\\[)([ xX])(\\])(?=\\s|$)",
       "captures": {
-        "1": { "name": "markup.task.bracket.braindump" }
+        "1": { "name": "markup.task.bracket.braindump" },
+        "2": { "name": "markup.task.bracket.braindump" },
+        "3": { "name": "markup.task.bracket.braindump" }
       }
     },
 

@@ -66,6 +66,20 @@
         "path": "./syntaxes/braindump.tmLanguage.json"
       }
     ],
+    "commands": [
+      {
+        "command": "braindump.toggleTask",
+        "title": "Braindump: Toggle Task"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "braindump.toggleTask",
+        "key": "ctrl+shift+enter",
+        "mac": "cmd+shift+enter",
+        "when": "editorLangId == braindump && editorTextFocus"
+      }
+    ],
     "configurationDefaults": {
       "editor.tokenColorCustomizations": {
         "textMateRules": [
