@@ -6,7 +6,9 @@ A small set of line-leading symbols (`#`, `+`, `-`, `?`, `!`, `>`, `<`, `//`) tu
 
 There's no preview mode. No compile step. What you type is what you read.
 
-![A braindump sample note](https://raw.githubusercontent.com/sweetlemonai/braindump-language/main/images/note.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/sweetlemonai/braindump-language/main/images/note.png" alt="Braindump Colors" width="600" />
+</p>
 
 ## Why braindump
 
@@ -34,7 +36,9 @@ Braindump isn't a Markdown replacement, a wiki, or a personal-knowledge-manageme
 
 **Light & dark palettes.** Auto-detected from your active VS Code theme name. Colors render the same regardless of which theme you have active — your theme stays untouched outside `.bd` files.
 
-![Braindump Colors](https://raw.githubusercontent.com/sweetlemonai/braindump-language/main/images/colors.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/sweetlemonai/braindump-language/main/images/colors.png" alt="Braindump Colors" width="600" />
+</p>
 
 ## A taste of the syntax
 
