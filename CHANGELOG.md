@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.1 — 2026-05-03
+
+- README rewrite for clarity, plus screenshots of the customization panel and refreshed syntax sample.
+
 ## 1.4.0 — 2026-05-03
 
 - **Color customization panel.** New command `Braindump: Customize colors` opens a webview with five preset palettes (Original, Minimal, Sunset, Ocean, Light) and a per-token color picker for every depth-1 token. Customizations save to user `settings.json` under the `[braindump]` scope; depth-2/3 colors auto-derive as 10%/20% darker.
