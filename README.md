@@ -30,7 +30,7 @@ Braindump isn't a Markdown replacement, a wiki, or a personal-knowledge-manageme
 
 Every Braindump file is built from a handful of line-leading markers and a few inline tokens. That's the whole language.
 
-![Braindump syntax rendered in a dark theme](https://raw.githubusercontent.com/sweetlemonai/braindump-language/main/images/syntax.png)
+<!-- ![Braindump syntax rendered in a dark theme](https://raw.githubusercontent.com/sweetlemonai/braindump-language/main/images/syntax.png) -->
 
 ### Structure
 
