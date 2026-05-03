@@ -1,7 +1,5 @@
-node_modules
-*.vsix
-dist
-out
-.vscode-test
 .DS_Store
-.claude
+.claude/
+node_modules/
+*.vsix
+.vscode-test/

@@ -1,150 +1,100 @@
-# Braindump Notes
+<div align="center">
+  <img src="images/braindump.png" alt="Braindump logo" width="128" />
+  <h1>Braindump</h1>
+  <p>Syntax highlighting for <code>.bd</code> note-taking files in VS Code.</p>
+</div>
 
-A plain-text note-taking format for VS Code.
+---
 
-## What is Braindump?
+Braindump is a lightweight note syntax built around line-leading markers (`#`, `+`, `-`, `*`, `?`, `!`, `>`, `<`, `//`) and a few inline tokens (`@mention`, `--flag`, URLs, `"strings"`). This extension paints all of them — and only inside `.bd` files. Your other files stay untouched, regardless of what theme you use.
 
-Braindump is a set of simple symbols you put at the start of lines (`#` for a heading, `?` for a question, `!` for something important) that get color-coded as you type. It's a format for notes, not code.
+## Screenshots
 
-You might be thinking: that sounds like Markdown. The difference is that **Braindump has no preview mode**. In Markdown, you write `## Heading` and then flip to a preview to see a styled heading without the `##`. In Braindump, the `##` stays visible on the screen, always. It gets colored, but it never disappears. What you type is what you read.
+> Placeholder images. Replace `images/screenshot-dark.png` and `images/screenshot-light.png` with real captures of `sample.bd` once you've installed the extension.
 
-That one choice shapes everything about how Braindump works. It's meant for people who want to write notes fast, scroll through them later, and never think about "edit mode" vs "reading mode." Open a `.bd` file, type, close it. That's the whole loop.
-
-Braindump paints `.bd` files its own way — a dark or light palette picked automatically from your VS Code color mode — so your notes look the same no matter which theme you use for code.
-
-![Braindump dark palette](https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/dark.png)
-
-## Getting started
-
-1. Install the extension from the VS Code marketplace.
-2. Create a file ending in `.bd`.
-3. Start typing.
-
-## The symbols
-
-### At the start of a line
-
-| Type this | What it means |
+| Dark | Light |
 |---|---|
-| `#`, `##`, `###` | Heading, three levels |
-| `=`, `==`, `===` | Category |
-| `+`, `++`, `+++` | Section |
-| `-`, `--`, `---` | List item |
-| `*`, `**`, `***` | Starred item |
-| `?`, `??`, `???` | Question |
-| `!` | Important / attention |
-| `@ alice` | Person reference |
-| `>` | Outbound action (send, push, …) |
-| `<` | Inbound action (fetch, pull, …) |
-| `//` | Comment |
-| `a.`, `b.`, `c.` | Alphabetical list |
-| `_`, `__` | Underline label (two quieter levels) |
+| ![Dark theme rendering](images/screenshot-dark.png) | ![Light theme rendering](images/screenshot-light.png) |
 
-For the three-level symbols (`#` / `##` / `###`, etc.), level 1 is the strongest color and levels 2 and 3 are quieter versions of the same color. A `## Subheading` reads as a muted sibling of `# Heading`, not a different thing.
+## Syntax at a glance
 
-### Anywhere in a line
+| Construct | What it does | Whole-line / Marker only |
+|---|---|---|
+| `# heading` `## …` `### …` | Heading, three depths | Whole line |
+| `= category` `==` `===` | Category, three depths | Whole line |
+| `+ section` `++` `+++` | Section, three depths | Whole line |
+| `? question` `??` `???` | Question (italic), three depths | Whole line |
+| `! alert` | Alert (bold) | Whole line |
+| `// comment` | Line comment (italic) | Whole line |
+| `1.` `a.` `A.` | Numbered / lettered list | Whole line |
+| `> forward` `>>` `>>>` | Forward reference, three depths | Whole line |
+| `< back` `<<` `<<<` | Back reference, three depths | Whole line |
+| `- bullet` `--` `---` | Bullet, three depths | Marker only |
+| `* important` `**` `***` | Priority (bold body, red marker), three depths | Marker red + line bold |
+| `key: value` | Key/value pair | Key colored; value colored in light, default in dark |
+| `(line)` `[line]` `{line}` | Bracket / brace lines | Whole line, distinct char + content colors |
+| `@mention` / `@ mention` | Mention (token) | Token only |
+| `--flag` | CLI flag (token) | Token only |
+| `https://…` | URL (token, underlined) | Token only |
+| `"double"` | String (token) | Token only |
+| ` ``` ` … ` ``` ` | Fenced code block (suspends all tokens inside) | Block |
 
-| Type this | What it means |
-|---|---|
-| `@name` | Mention (works mid-line too) |
-| `"text"` | Double-quoted string |
-| `'text'` | Single-quoted string |
-| `` `text` `` | Backticks (for code-like things) |
-| `1.`, `2.`, `3.` | Numbered list |
-| `key: value` | Label and value |
-| `http://...` | Link (becomes clickable) |
+Full positive / negative / edge-case coverage lives in `sample.bd`.
 
-Natural prose stays plain. Writing "(by the way)" mid-sentence doesn't get highlighted. Parens, brackets, and braces only get colored when they're on their own line as labels:
+## How the colors work
 
-```
-(Parentheses-only line)
-[Bracket-only line]
-{Brace-only line}
+Colors are contributed via `configurationDefaults.editor.tokenColorCustomizations` in `package.json`. Every grammar scope ends in `.braindump` so the rules only fire inside `.bd` files — nothing else in your editor is affected.
+
+The dark palette is the default. The light palette is contributed via the `[*Light*]` theme-name glob, which matches "Default Light+", "GitHub Light", "Solarized Light", "Quiet Light", etc. Themes that are visually light but don't include `Light` in their name will receive the dark palette — workaround is a personal `settings.json` override.
+
+### Light vs dark asymmetry (intentional)
+
+The dark palette colors only the **key** in `key: value` (value falls through to default text). The light palette colors **both** key (`#155E75`) and value (`#0891B2`). This is by design.
+
+## Install
+
+### From the Marketplace
+
+```bash
+code --install-extension sweet-lemon.braindump-language
 ```
 
-## What the extension does for you
+### From a local `.vsix`
 
-### Outline
-
-Press `Cmd+Shift+O` (Mac) or `Ctrl+Shift+O` (Windows/Linux) to open a searchable outline of the current note. Headings, categories, and sections show up as a nested tree; your open questions and important lines show up as a flat list underneath.
-
-You can also open a permanent Outline panel from the Explorer sidebar. Scroll to the bottom and expand OUTLINE.
-
-### Folding
-
-Any heading-family line starter (`#` / `##` / `###`, `=` / `==` / `===`, `+` / `++` / `+++`) opens a fold. Click the triangle in the gutter next to the line, or use `Cmd+Option+[` / `Ctrl+Shift+[` to collapse; the section closes at the next line of the same or higher level.
-
-### Cycling callouts
-
-Press `Cmd+Enter` (Mac) or `Ctrl+Enter` (Windows/Linux) on a line to cycle it through callout types:
-
-```
-plain  →  ? question  →  ! important  →  * starred  →  plain
+```bash
+npx -y @vscode/vsce package
+code --install-extension braindump-language-1.2.0.vsix
 ```
 
-Select multiple lines first to cycle them all at once. Blank lines in the selection are left alone.
+To uninstall:
 
-This shortcut replaces VS Code's built-in "insert line below" inside `.bd` files only. If you miss that behavior, you can rebind from Settings → Keyboard Shortcuts.
+```bash
+code --uninstall-extension sweet-lemon.braindump-language
+```
 
-### Mention completion
+## Develop locally
 
-Type `@` in any note and you'll get a dropdown with every `@name` you've used across all your `.bd` files, with the most-used names at the top. It picks up new names as you type, even before saving.
+Open the project in VS Code, then launch a clean dev-host window with the extension loaded:
 
-Email addresses like `foo@bar.com` don't trigger the dropdown and don't pollute the suggestions.
+```bash
+code --extensionDevelopmentPath="$PWD" sample.bd
+```
 
-### Status bar counter
+The dev host runs in isolation; closing the window unloads the extension. Use **Developer: Reload Window** (`Cmd+R`) after editing the grammar JSON or `package.json` to pick up changes.
 
-A small counter at the bottom-right of VS Code shows how many open questions are in the current note. Click it to get a list of every question and jump to any of them.
+To inspect grammar scope assignment, run **Developer: Inspect Editor Tokens and Scopes** in the dev host and click any character in `sample.bd` — the panel shows the full scope stack.
 
-You can switch it to count important (`!`) or starred (`*`) items instead, or have it show a total across your whole workspace. See Settings below.
+## Build
 
-### Snippets
+```bash
+npx -y @vscode/vsce package
+```
 
-Shortcuts that expand when you type them and press Tab:
+Produces `braindump-language-1.2.0.vsix` in the project root. No `npm install`, no compile step — the extension contributes only declarative JSON.
 
-| Type this | You get |
-|---|---|
-| `today` | Today's date, e.g. `2026-04-20` |
-| `h1`, `h2`, `h3` | `# `, `## `, `### ` with cursor after |
-| `q` | `? ` |
-| `imp` | `! ` |
-| `kv` | `key: value` with tab stops on the key and value |
+## Contributing
 
-![Braindump light palette](https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/light.png)
-
-## Keyboard shortcuts
-
-| Keys | What it does |
-|---|---|
-| `Cmd+Enter` / `Ctrl+Enter` | Cycle callout on the current line |
-| `Cmd+Shift+O` / `Ctrl+Shift+O` | Jump to a heading or question in this file |
-
-## Settings
-
-All under `braindump.*` in VS Code settings:
-
-| Setting | Options | Default | What it controls |
-|---|---|---|---|
-| `braindump.statusBar.track` | `questions`, `important`, `starred`, `off` | `questions` | Which line type the status bar counts |
-| `braindump.statusBar.scope` | `file`, `workspace`, `off` | `file` | Count just the current file, count across your whole workspace, or hide the counter |
-
-## Troubleshooting
-
-**Colors look wrong.** Braindump paints `.bd` files with its own palette — dark or light, picked from your VS Code color mode — so changing themes shouldn't affect the result. If a construct isn't getting the color you expect, file an issue with the line you typed and your VS Code color mode.
-
-**My note isn't colored.** Look at the bottom-right of the status bar. If it says "Plain Text" instead of "Braindump," click it and pick "Braindump" from the list. Saving the file with a `.bd` extension should make this automatic.
-
-**The outline is empty.** Same fix. Make sure the file is recognized as Braindump. Once it is, headings appear in the outline right away.
-
-**`Cmd+Enter` isn't cycling callouts.** Another extension might have taken the shortcut. Open Settings → Keyboard Shortcuts, search for `cmd+enter`, and find the conflict.
-
-**Mention suggestions are empty.** Suggestions only come from `.bd` files. Make sure your notes are saved with that extension and aren't excluded by a `.gitignore`.
-
-## Issues and feedback
-
-Report issues at [github.com/sweetlemonai/braindump-vscode](https://github.com/sweetlemonai/braindump-vscode).
-
-Release notes: [CHANGELOG.md](CHANGELOG.md).
+Issues and PRs welcome. The grammar lives in [`syntaxes/braindump.tmLanguage.json`](syntaxes/braindump.tmLanguage.json); colors live in `package.json` under `contributes.configurationDefaults`.
 
 ## License
 

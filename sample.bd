@@ -1,0 +1,468 @@
+# Braindump test file (2026-05-02)
+## Purpose
+### Stress-test every token, every depth, every grammar trap
+
+This file is the canonical test for the braindump grammar and palette.
+Every section below either confirms a token works (POSITIVE) or confirms
+a thing-that-looks-like-a-token does NOT match (NEGATIVE / TRAP).
+
+
+# ============================================================
+# POSITIVE: Whole-line markers (depth 1 → 2 → 3)
+# ============================================================
+
+# Heading depth 1
+## Heading depth 2
+### Heading depth 3
+
+= Category depth 1
+== Category depth 2
+=== Category depth 3
+
++ Section depth 1
+++ Section depth 2
++++ Section depth 3
+
+? question depth 1
+?? question depth 2
+??? question depth 3
+
+! alert single depth (no repetition by design)
+
+
+# ============================================================
+# POSITIVE: Marker-only (text after marker stays default)
+# ============================================================
+
+- bullet depth 1
+-- bullet depth 2
+--- bullet depth 3
+
+* important depth 1
+** important depth 2
+*** important depth 3
+
+> forward depth 1
+>> forward depth 2
+>>> forward depth 3
+
+< back depth 1
+<< back depth 2
+<<< back depth 3
+
+
+# ============================================================
+# POSITIVE: Lists (whole line gold)
+# ============================================================
+
+1. first deliverable
+2. second deliverable
+3. third deliverable
+10. tenth item with a wider marker
+100. hundredth item even wider
+
+a. alpha item
+b. beta item
+c. gamma item
+z. final letter
+A. uppercase alpha (should this work? grammar decides)
+Z. uppercase z
+
+
+# ============================================================
+# POSITIVE: Annotations and inline tokens
+# ============================================================
+
+@ alice
+@bob is on the team
+Contact @carol-smith about the timeline.
+Email me at @dave too please.
+
+! deadline Friday
+! ship by end of quarter
+
+// TODO: confirm budget with finance
+// comment line
+//no-space-after-slashes still a comment
+
+
+# ============================================================
+# POSITIVE: Key-value, underscore, brackets
+# ============================================================
+
+name: braindump
+status: in-progress
+url: https://example.com/docs
+version: 0.2.1
+author: purple-vision
+nested-key: value with spaces and "quotes" inside
+
+_ underscore label
+__ double-underscore label
+
+(Parentheses label on its own line)
+[Bracket label here]
+{Brace label here}
+
+(Another paren line, longer to see how it sits visually)
+[Array of things, longer line for testing]
+{Object configuration block}
+
+
+# ============================================================
+# POSITIVE: Strings and URLs
+# ============================================================
+
+lorem "double-quoted ipsum" dolor sit amet
+"only the double quotes are colored"
+"first" "second" "third" all on one line
+
+See https://example.com for details.
+Also https://docs.example.com/path?q=1&r=2 in prose.
+http://no-https-still-works.com
+https://very.long.subdomain.example.com/some/deeply/nested/path/that/keeps/going.html
+URL at end of sentence: https://example.com.
+URL in parens (https://example.com).
+
+
+# ============================================================
+# POSITIVE: CLI flags (--word, no space after dashes)
+# ============================================================
+
+-resume
+--restart
+--from-task
+---dry-run
+--verbose --debug --no-cache (multiple flags one line)
+> harness Build --resume --from-task=42
+> harness Plan --output stories.json
+
+
+# ============================================================
+# POSITIVE: Realistic indented note
+# ============================================================
+
+# Build pipeline
+    high level: Plan, Build, Ship
+    + project
+        (the whole repo)
+        - needs planning
+            > harness Plan project:<path/to/brief>
+            output: stories, ordered
+        ? do we version the brief
+        ! deadline before kickoff
+    + story
+        (in existing codebase)
+        - break down into tasks
+            > harness Plan story:<path/to/brief>
+        // TODO: confirm dependency graph format
+    + task
+        (smallest unit, ready for implementation)
+        - has acceptance criteria
+        - has test plan
+
+## Build phases (per task)
+    preflight    < create branch, set up env
+    spec         < design, UI needs, storybook, e2e
+    context      ? does spec need context
+    code         < write the implementation
+    tests        < unit + integration in parallel
+    gates        < tsc, eslint, vitest, a11y
+    commit       < locally only, no push
+
+
+# ============================================================
+# POSITIVE: Q&A pattern from real notes
+# ============================================================
+
+Q1: How do you break down a feature for a small team?
+    - slice vertically, end-to-end early
+    - de-risk unknowns first
+    - milestones around user value
+    ? are there hidden dependencies
+    ! protect 20% buffer time
+    // came up in 1:1 last week
+
+Q2: When do you escalate vs decide?
+    - default is to decide
+    Escalate when:
+        - irreversible (db choice, contracts)
+        - crosses team boundaries
+        - cost of being wrong is high
+    < came up in design review
+    > follow up with @alice next week
+
+
+# ============================================================
+# POSITIVE: Bullet rhythm test (long uniform run)
+# ============================================================
+
+- alpha
+- bravo
+- charlie
+- delta
+- echo
+- foxtrot
+- golf
+- hotel
+- india
+- juliet
+- kilo
+- lima
+
+
+# ============================================================
+# POSITIVE: Adjacency stress (no blank lines between markers)
+# ============================================================
+
+# heading
+= category
++ section
+- bullet
+* important
+? question
+! flag
+@ mention
+> forward
+< back
+// comment
+
+# heading right next to
+= category right next to
++ section right next to
+- bullet right next to
+* important — should not bleed red into other markers
+? question
+> command
+< back
+// comment
+
+
+# ============================================================
+# NEGATIVE: Triple-slash is NOT a comment
+# ============================================================
+
+/// triple slash is plain text, not a comment
+/// /// not a comment either
+//// quadruple slash is also not a comment
+///comment? no, plain text
+
+
+# ============================================================
+# NEGATIVE: Email and URL @ must NOT highlight as mention
+# ============================================================
+
+Email foo@bar.com — the @ here is part of an email, not a mention.
+Send to alice@example.com please.
+git@github.com:user/repo.git is an SSH URL.
+user@host:~/path is a shell prompt fragment.
+"quoted@string" should not mention.
+prefix@notmention (no whitespace before @ = not a mention)
+
+
+# ============================================================
+# NEGATIVE: ? in URLs must NOT trigger question highlight
+# ============================================================
+
+https://example.com/path?q=1
+https://example.com/search?query=hello&page=2
+https://api.example.com/v1/users?id=42&format=json
+The URL https://x.com/?ref=abc inside prose.
+
+
+# ============================================================
+# NEGATIVE: Inline parentheticals stay plain
+# ============================================================
+
+Meeting notes mid-line (with a parenthetical) that should stay plain text.
+The token (here) and (here) and (here) should all be default color.
+Multiple (one) (two) (three) parens in one line.
+Nested ((double parens)) handling — grammar's call.
+Compare to bracket-LINE labels which DO get colored (see positive section above).
+
+Same rule for [inline brackets] and {inline braces} mid-line.
+Code reference: see function([arg1, arg2]) for details.
+Object: pass {key: value} as the second argument.
+
+
+# ============================================================
+# NEGATIVE: Markers mid-line do NOT trigger
+# ============================================================
+
+This sentence has a # in the middle and should not highlight.
+The price is 5 + 3 = 8 (math, not markers).
+Use - for hyphenation when needed.
+She asked: "what about the * symbol?"
+The < and > comparison operators in code: a < b > c.
+Greater than > or less than < should not become refs mid-line.
+Question? In the middle of a sentence. Not a question marker.
+
+
+# ============================================================
+# NEGATIVE: --dash patterns that are not flags
+# ============================================================
+
+em-dash—not-a-flag (em dash character is not two ascii dashes)
+hyphen-word-with-dashes is normal text
+prefix --middle-flag suffix (only the --middle-flag is a flag)
+"--quoted-flag" inside a string — grammar's call whether to highlight
+-text (single dash, no space — undefined per spec; should render plain)
+---text (triple dash, no space — undefined per spec; should render plain)
+
+
+# ============================================================
+# NEGATIVE: Numbered/lettered patterns that aren't lists
+# ============================================================
+
+The version is 1.2.3 — not a list item.
+He scored 9.5 on the test (decimal, not a list).
+Section 2.1.4 of the spec (also not a list).
+"1. first" inside a quoted string.
+Item 1 of 3 — phrase, not a list marker.
+e.g. is an abbreviation, not a lettered list.
+i.e. same — needs whitespace handling.
+
+
+# ============================================================
+# NEGATIVE: Strings that aren't strings
+# ============================================================
+
+It's a contraction, don't highlight the apostrophe as a string.
+"unclosed string at end of line
+unclosed string with " in the middle but no closing quote
+'single' quotes should render plain (single removed from spec)
+`backtick` should also render plain (backtick removed from spec)
+Mixed: "double works" 'single doesnt' `backtick doesnt` here.
+
+
+# ============================================================
+# NEGATIVE: Things that look like key:value but aren't
+# ============================================================
+
+The time is 10:30 and we should leave.
+Ratio of 3:1 in favor.
+URL fragment example.com:8080/path
+"quoted: thing" inside a string.
+Two colons:: should not highlight.
+Indented but no value:
+    just a dangling colon above
+::starting with colon
+
+
+# ============================================================
+# NEGATIVE: Markers in code blocks (if grammar supports them)
+# ============================================================
+
+```
+# this is inside a fenced code block
+- so is this
+@ and this
+```
+
+Grammar decision: do code fences suspend braindump tokens?
+This file assumes YES — markers inside ``` should render plain.
+
+
+# ============================================================
+# EDGE: Whitespace and indentation cases
+# ============================================================
+
+   # heading with leading spaces
+	# heading with leading tab
+# heading at column 0
+#no-space-after-hash (is this a heading? grammar decides)
+#  multiple spaces after marker
+
+    - bullet at indent 4
+        - bullet at indent 8
+            - bullet at indent 12
+
+	-	bullet with tab after marker
+   *  star with spaces around
+  ?? question deeply indented and depth-2
+
+
+# ============================================================
+# EDGE: Empty markers and edge cases
+# ============================================================
+
+#
+##
+###
+=
++
+-
+*
+?
+!
+//
+@
+>
+
+
+(does an empty marker render anything? grammar decides)
+
+
+# ============================================================
+# EDGE: Marker collisions and ambiguity
+# ============================================================
+
+# # double hash mid-line as text
+= = double equals as text
++ + plus plus mid-line
+- - dash dash with space (not a depth-2 bullet because of context?)
+
+Edge: a line that starts "* " is important, but what about "*italic*"?
+Markdown italic: *one star around word* should NOT trigger important.
+Markdown bold: **bold text** should NOT trigger.
+Markdown ___underline___ should NOT trigger underscore-label.
+
+
+# ============================================================
+# EDGE: Mixed inline tokens in one line
+# ============================================================
+
+1. ask @alice to review the doc at https://example.com/spec
+2. file ticket "URGENT" at https://tracker.example.com/123
+3. circle back with @bob (he's on PTO until Friday)
+4. run > harness Build --resume after merging
+5. note that "the deadline" is actually next @monday
+
+> harness Build "my project" --flag --other-flag
+> harness Plan @alice's-project --output=stories.md
+
+key with @mention: value containing https://url.com and "string"
+config: value, --flag, @mention, "quoted", https://url.com, (paren)
+
+
+# ============================================================
+# EDGE: Very long lines and wrapping behavior
+# ============================================================
+
+# A very long heading that goes on and on and tests how the heading color holds up across many words and visual wrapping if the editor is narrow enough to wrap this line which it might be
+
+- A very long bullet item that goes on and on and tests whether the marker-only coloring rule survives line wrap when the visual line breaks but the logical line continues for many many many words across the screen
+
+> harness Build with a very long command that includes --many --flags and "quoted strings" and paths/to/files.json and continues for a while to test wrapping
+
+
+# ============================================================
+# EDGE: Unicode and special characters
+# ============================================================
+
+# Heading with emoji 🚀 and unicode café
+- bullet with em-dash — and en-dash – inside
+@ alice-with-unicode-ñame
+"string with emoji 🎉 inside"
+key-ñ: value-é
+URL with unicode: https://example.com/café/résumé
+
+
+# ============================================================
+# END
+# ============================================================
+
+Last lines, no trailing newline issues:
+- final bullet
+- and another
+- and one more

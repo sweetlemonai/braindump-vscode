@@ -1,32 +1,10 @@
 {
-  "name": "braindump",
-  "publisher": "purple-vision",
-  "displayName": "Braindump — Notes for VS Code",
-  "description": "Plain-text .bd note-taking with its own color palette (dark/light auto-selected), an outline view, mention completion, callout cycling, and a status bar counter.",
-  "version": "1.1.2",
-  "icon": "images/logo.jpg",
-  "main": "./dist/extension.js",
-  "keywords": [
-    "notes",
-    "note-taking",
-    "braindump",
-    "todo",
-    "tasks",
-    "outline",
-    "journal",
-    "plain-text",
-    "pkm",
-    "zettelkasten",
-    "markdown"
-  ],
-  "homepage": "https://github.com/sweetlemonai/braindump-vscode#readme",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/sweetlemonai/braindump-vscode.git"
-  },
-  "bugs": {
-    "url": "https://github.com/sweetlemonai/braindump-vscode/issues"
-  },
+  "name": "braindump-language",
+  "displayName": "Braindump",
+  "description": "Syntax highlighting for the Braindump note-taking syntax (.bd files).",
+  "version": "1.2.0",
+  "publisher": "sweet-lemon",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -35,14 +13,32 @@
     "Snippets",
     "Other"
   ],
+  "keywords": [
+    "braindump",
+    "notes",
+    "outline",
+    "markdown",
+    "note-taking",
+    "journal",
+    "plain-text",
+    "markdown"
+  ],
+  "icon": "images/braindump.png",
+  "homepage": "https://github.com/sweetlemonai/braindump-vscode#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sweetlemonai/braindump-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sweetlemonai/braindump-vscode/issues"
+  },
   "contributes": {
     "languages": [
       {
         "id": "braindump",
         "aliases": [
-          "braindump",
-          "bd",
-          "brain dump"
+          "Braindump",
+          "braindump"
         ],
         "extensions": [
           ".bd"
@@ -53,90 +49,529 @@
     "grammars": [
       {
         "language": "braindump",
-        "scopeName": "source.bd",
+        "scopeName": "source.braindump",
         "path": "./syntaxes/braindump.tmLanguage.json"
       }
     ],
-    "snippets": [
-      {
-        "language": "braindump",
-        "path": "./snippets/braindump.json"
-      }
-    ],
-    "commands": [
-      {
-        "command": "braindump.cycleAnnotation",
-        "title": "Braindump: Cycle Callout Annotation"
-      },
-      {
-        "command": "braindump.showCallouts",
-        "title": "Braindump: Show Callouts"
-      }
-    ],
-    "keybindings": [
-      {
-        "command": "braindump.cycleAnnotation",
-        "key": "ctrl+enter",
-        "mac": "cmd+enter",
-        "when": "editorLangId == braindump && editorTextFocus"
-      }
-    ],
-    "configuration": {
-      "title": "Braindump",
-      "properties": {
-        "braindump.statusBar.track": {
-          "type": "string",
-          "enum": ["questions", "important", "starred", "off"],
-          "enumDescriptions": [
-            "Count '?' / '??' / '???' lines.",
-            "Count '!' lines.",
-            "Count '*' / '**' / '***' lines.",
-            "Hide the status bar item."
-          ],
-          "default": "questions",
-          "description": "Which construct the Braindump status bar tracks in .bd files."
-        },
-        "braindump.statusBar.scope": {
-          "type": "string",
-          "enum": ["file", "workspace", "off"],
-          "enumDescriptions": [
-            "Count only in the active file.",
-            "Show 'file count / workspace count'.",
-            "Hide the status bar item."
-          ],
-          "default": "file",
-          "description": "Scope of the Braindump status bar count."
+    "configurationDefaults": {
+      "editor.tokenColorCustomizations": {
+        "textMateRules": [
+          {
+            "scope": "source.braindump",
+            "settings": {
+              "foreground": "#C5C2D6"
+            }
+          },
+          {
+            "scope": "markup.heading.depth-1.braindump",
+            "settings": {
+              "foreground": "#E47A0A",
+              "fontStyle": ""
+            }
+          },
+          {
+            "scope": "markup.heading.depth-2.braindump",
+            "settings": {
+              "foreground": "#CD6E09",
+              "fontStyle": ""
+            }
+          },
+          {
+            "scope": "markup.heading.depth-3.braindump",
+            "settings": {
+              "foreground": "#B66208",
+              "fontStyle": ""
+            }
+          },
+          {
+            "scope": "markup.category.depth-1.braindump",
+            "settings": {
+              "foreground": "#249FD0"
+            }
+          },
+          {
+            "scope": "markup.category.depth-2.braindump",
+            "settings": {
+              "foreground": "#208FBB"
+            }
+          },
+          {
+            "scope": "markup.category.depth-3.braindump",
+            "settings": {
+              "foreground": "#1D7FA6"
+            }
+          },
+          {
+            "scope": "markup.section.depth-1.braindump",
+            "settings": {
+              "foreground": "#DD6BA7"
+            }
+          },
+          {
+            "scope": "markup.section.depth-2.braindump",
+            "settings": {
+              "foreground": "#C76096"
+            }
+          },
+          {
+            "scope": "markup.section.depth-3.braindump",
+            "settings": {
+              "foreground": "#B15686"
+            }
+          },
+          {
+            "scope": "keyword.bullet.depth-1.braindump",
+            "settings": {
+              "foreground": "#DB8FEE"
+            }
+          },
+          {
+            "scope": "keyword.bullet.depth-2.braindump",
+            "settings": {
+              "foreground": "#C581D6"
+            }
+          },
+          {
+            "scope": "keyword.bullet.depth-3.braindump",
+            "settings": {
+              "foreground": "#AF72BE"
+            }
+          },
+          {
+            "scope": "keyword.priority.depth-1.braindump",
+            "settings": {
+              "foreground": "#E02323"
+            }
+          },
+          {
+            "scope": "keyword.priority.depth-2.braindump",
+            "settings": {
+              "foreground": "#CA1F1F"
+            }
+          },
+          {
+            "scope": "keyword.priority.depth-3.braindump",
+            "settings": {
+              "foreground": "#B31C1C"
+            }
+          },
+          {
+            "scope": "markup.priority.line.braindump",
+            "settings": {
+              "fontStyle": "bold"
+            }
+          },
+          {
+            "scope": "markup.question.depth-1.braindump",
+            "settings": {
+              "foreground": "#3AA860",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "markup.question.depth-2.braindump",
+            "settings": {
+              "foreground": "#34976D",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "markup.question.depth-3.braindump",
+            "settings": {
+              "foreground": "#2F8862",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "markup.alert.braindump",
+            "settings": {
+              "foreground": "#95B300",
+              "fontStyle": "bold"
+            }
+          },
+          {
+            "scope": "comment.line.double-slash.braindump",
+            "settings": {
+              "foreground": "#7769B4",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "markup.forward.depth-1.braindump",
+            "settings": {
+              "foreground": "#2A9097"
+            }
+          },
+          {
+            "scope": "markup.forward.depth-2.braindump",
+            "settings": {
+              "foreground": "#268288"
+            }
+          },
+          {
+            "scope": "markup.forward.depth-3.braindump",
+            "settings": {
+              "foreground": "#227379"
+            }
+          },
+          {
+            "scope": "keyword.back.depth-1.braindump",
+            "settings": {
+              "foreground": "#5A8AB0"
+            }
+          },
+          {
+            "scope": "keyword.back.depth-2.braindump",
+            "settings": {
+              "foreground": "#517C9E"
+            }
+          },
+          {
+            "scope": "keyword.back.depth-3.braindump",
+            "settings": {
+              "foreground": "#486E8C"
+            }
+          },
+          {
+            "scope": "keyword.mention.braindump",
+            "settings": {
+              "foreground": "#C878FF"
+            }
+          },
+          {
+            "scope": "keyword.flag.braindump",
+            "settings": {
+              "foreground": "#7090B0"
+            }
+          },
+          {
+            "scope": "markup.underline.link.braindump",
+            "settings": {
+              "foreground": "#C0C8FF",
+              "fontStyle": "underline"
+            }
+          },
+          {
+            "scope": "keyword.field.braindump",
+            "settings": {
+              "foreground": "#23C4E0"
+            }
+          },
+          {
+            "scope": "meta.field.value.braindump",
+            "settings": {
+              "foreground": "#A8E0FF"
+            }
+          },
+          {
+            "scope": "markup.list.numbered.braindump",
+            "settings": {
+              "foreground": "#DAA520"
+            }
+          },
+          {
+            "scope": "markup.list.lettered.braindump",
+            "settings": {
+              "foreground": "#DAA520"
+            }
+          },
+          {
+            "scope": "punctuation.paren.line.braindump",
+            "settings": {
+              "foreground": "#DAA520"
+            }
+          },
+          {
+            "scope": "markup.paren.line.content.braindump",
+            "settings": {
+              "foreground": "#5C8F3A"
+            }
+          },
+          {
+            "scope": "punctuation.bracket.line.braindump",
+            "settings": {
+              "foreground": "#5C8F3A"
+            }
+          },
+          {
+            "scope": "markup.bracket.line.content.braindump",
+            "settings": {
+              "foreground": "#DAA520"
+            }
+          },
+          {
+            "scope": "markup.brace.line.braindump",
+            "settings": {
+              "foreground": "#DD6BA7"
+            }
+          },
+          {
+            "scope": "string.quoted.double.braindump",
+            "settings": {
+              "foreground": "#E8B048"
+            }
+          }
+        ],
+        "[*Light*]": {
+          "textMateRules": [
+            {
+              "scope": "source.braindump",
+              "settings": {
+                "foreground": "#1A1A1A"
+              }
+            },
+            {
+              "scope": "markup.heading.depth-1.braindump",
+              "settings": {
+                "foreground": "#C2410C",
+                "fontStyle": ""
+              }
+            },
+            {
+              "scope": "markup.heading.depth-2.braindump",
+              "settings": {
+                "foreground": "#AF3B0B",
+                "fontStyle": ""
+              }
+            },
+            {
+              "scope": "markup.heading.depth-3.braindump",
+              "settings": {
+                "foreground": "#9B340A",
+                "fontStyle": ""
+              }
+            },
+            {
+              "scope": "markup.category.depth-1.braindump",
+              "settings": {
+                "foreground": "#0369A1"
+              }
+            },
+            {
+              "scope": "markup.category.depth-2.braindump",
+              "settings": {
+                "foreground": "#035F91"
+              }
+            },
+            {
+              "scope": "markup.category.depth-3.braindump",
+              "settings": {
+                "foreground": "#025481"
+              }
+            },
+            {
+              "scope": "markup.section.depth-1.braindump",
+              "settings": {
+                "foreground": "#BE185D"
+              }
+            },
+            {
+              "scope": "markup.section.depth-2.braindump",
+              "settings": {
+                "foreground": "#AB1654"
+              }
+            },
+            {
+              "scope": "markup.section.depth-3.braindump",
+              "settings": {
+                "foreground": "#98134A"
+              }
+            },
+            {
+              "scope": "keyword.bullet.depth-1.braindump",
+              "settings": {
+                "foreground": "#7C3AED"
+              }
+            },
+            {
+              "scope": "keyword.bullet.depth-2.braindump",
+              "settings": {
+                "foreground": "#7034D5"
+              }
+            },
+            {
+              "scope": "keyword.bullet.depth-3.braindump",
+              "settings": {
+                "foreground": "#632EBE"
+              }
+            },
+            {
+              "scope": "keyword.priority.depth-1.braindump",
+              "settings": {
+                "foreground": "#DC2626"
+              }
+            },
+            {
+              "scope": "keyword.priority.depth-2.braindump",
+              "settings": {
+                "foreground": "#C62222"
+              }
+            },
+            {
+              "scope": "keyword.priority.depth-3.braindump",
+              "settings": {
+                "foreground": "#B01E1E"
+              }
+            },
+            {
+              "scope": "markup.priority.line.braindump",
+              "settings": {
+                "fontStyle": "bold"
+              }
+            },
+            {
+              "scope": "markup.question.depth-1.braindump",
+              "settings": {
+                "foreground": "#15803D",
+                "fontStyle": "italic"
+              }
+            },
+            {
+              "scope": "markup.question.depth-2.braindump",
+              "settings": {
+                "foreground": "#137337",
+                "fontStyle": "italic"
+              }
+            },
+            {
+              "scope": "markup.question.depth-3.braindump",
+              "settings": {
+                "foreground": "#116631",
+                "fontStyle": "italic"
+              }
+            },
+            {
+              "scope": "markup.alert.braindump",
+              "settings": {
+                "foreground": "#B45309",
+                "fontStyle": "bold"
+              }
+            },
+            {
+              "scope": "comment.line.double-slash.braindump",
+              "settings": {
+                "foreground": "#6B21A8",
+                "fontStyle": "italic"
+              }
+            },
+            {
+              "scope": "markup.forward.depth-1.braindump",
+              "settings": {
+                "foreground": "#0E7490"
+              }
+            },
+            {
+              "scope": "markup.forward.depth-2.braindump",
+              "settings": {
+                "foreground": "#0D6882"
+              }
+            },
+            {
+              "scope": "markup.forward.depth-3.braindump",
+              "settings": {
+                "foreground": "#0B5D73"
+              }
+            },
+            {
+              "scope": "keyword.back.depth-1.braindump",
+              "settings": {
+                "foreground": "#1E40AF"
+              }
+            },
+            {
+              "scope": "keyword.back.depth-2.braindump",
+              "settings": {
+                "foreground": "#1B3A9E"
+              }
+            },
+            {
+              "scope": "keyword.back.depth-3.braindump",
+              "settings": {
+                "foreground": "#18338C"
+              }
+            },
+            {
+              "scope": "keyword.mention.braindump",
+              "settings": {
+                "foreground": "#9333EA"
+              }
+            },
+            {
+              "scope": "keyword.flag.braindump",
+              "settings": {
+                "foreground": "#475569"
+              }
+            },
+            {
+              "scope": "markup.underline.link.braindump",
+              "settings": {
+                "foreground": "#1D4ED8",
+                "fontStyle": "underline"
+              }
+            },
+            {
+              "scope": "keyword.field.braindump",
+              "settings": {
+                "foreground": "#155E75"
+              }
+            },
+            {
+              "scope": "meta.field.value.braindump",
+              "settings": {
+                "foreground": "#0891B2"
+              }
+            },
+            {
+              "scope": "markup.list.numbered.braindump",
+              "settings": {
+                "foreground": "#A16207"
+              }
+            },
+            {
+              "scope": "markup.list.lettered.braindump",
+              "settings": {
+                "foreground": "#A16207"
+              }
+            },
+            {
+              "scope": "punctuation.paren.line.braindump",
+              "settings": {
+                "foreground": "#A16207"
+              }
+            },
+            {
+              "scope": "markup.paren.line.content.braindump",
+              "settings": {
+                "foreground": "#3F6212"
+              }
+            },
+            {
+              "scope": "punctuation.bracket.line.braindump",
+              "settings": {
+                "foreground": "#3F6212"
+              }
+            },
+            {
+              "scope": "markup.bracket.line.content.braindump",
+              "settings": {
+                "foreground": "#A16207"
+              }
+            },
+            {
+              "scope": "markup.brace.line.braindump",
+              "settings": {
+                "foreground": "#BE185D"
+              }
+            },
+            {
+              "scope": "string.quoted.double.braindump",
+              "settings": {
+                "foreground": "#92400E"
+              }
+            }
+          ]
         }
       }
     }
-  },
-  "galleryBanner": {
-    "color": "#1b1b1f",
-    "theme": "dark"
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run compile -- --production",
-    "compile": "node esbuild.js",
-    "watch": "node esbuild.js --watch",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint \"src/**/*.ts\"",
-    "format": "prettier --write .",
-    "test:grammar": "vscode-tmgrammar-test -g syntaxes/braindump.tmLanguage.json \"src/test/grammar/*.bd\"",
-    "test:unit": "vitest run",
-    "test": "npm run test:grammar && npm run test:unit",
-    "package": "vsce package"
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.0",
-    "@types/vscode": "^1.85.0",
-    "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^7.0.0",
-    "@vscode/vsce": "^2.24.0",
-    "esbuild": "^0.20.0",
-    "eslint": "^8.57.0",
-    "prettier": "^3.2.0",
-    "typescript": "^5.4.0",
-    "vitest": "^1.4.0",
-    "vscode-tmgrammar-test": "^0.1.3"
   }
 }
