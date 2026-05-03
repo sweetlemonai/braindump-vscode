@@ -6,7 +6,7 @@ const BULLET_RE = /^(\s*)(-{1,3})(?=\s|$)/;
 
 const evenRowDecoration = vscode.window.createTextEditorDecorationType({
   light: { color: '#5B5475' }, // muted plum-gray
-  dark: { color: '#B8B0D8' }, // desaturated lavender
+  dark: { color: '#A693C0' }, // darker lavender — bumped from spec #B8B0D8
 });
 
 function refresh(editor: vscode.TextEditor | undefined): void {
