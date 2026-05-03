@@ -7,7 +7,7 @@ import {
   toggleTask,
 } from './features/tasks';
 
-const SELECTOR: vscode.DocumentSelector = { language: 'braindump' };
+const SELECTOR: vscode.DocumentSelector = { scheme: 'file', language: 'braindump' };
 
 export function activate(context: vscode.ExtensionContext): void {
   console.log('[Braindump] extension activated');
