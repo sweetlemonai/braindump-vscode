@@ -12,6 +12,8 @@ There's no preview mode. No compile step. What you type is what you read.
 
 Open a `.bd` file. Start typing. Your notes get color-coded as you go.
 
+![Braindump sample note in a dark theme](https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/note.png)
+
 ## Why another note format?
 
 Markdown was designed for documents you publish. Braindump is designed for notes you _keep_: the running thoughts, todo lists, meeting scribbles, half-formed ideas, and project plans you write for yourself.
@@ -92,7 +94,7 @@ Two arrows for two directions. Use `>` when the line is something you're sending
 [x] completed task
 ```
 
-Click the checkbox to toggle, or use `Cmd+Shift+Enter` (Mac) / `Ctrl+Shift+Enter` (Windows/Linux) on the line. Completed tasks get struck through automatically.
+Click the checkbox to toggle, or use `Cmd+Shift+Enter` (Mac) / `Ctrl+Shift+Enter` (Windows/Linux) on the line. Open and completed tasks look the same except for the `x` itself — no strikethrough, no dimming.
 
 ### Inline tokens
 
@@ -130,7 +132,7 @@ Standalone bracket-lines are colored as labels. Inline parentheticals like "by t
 | `< back` `<<` `<<<`        | Back reference, three depths                  | Whole line                                           |
 | `- bullet` `--` `---`      | Bullet, three depths                          | Marker only                                          |
 | `* important` `**` `***`   | Priority, three depths                        | Red marker, bold body text                           |
-| `[ ]` `[x]`                | Open / completed task                         | Bracket colored, body strikethrough when done        |
+| `[ ]` `[x]`                | Open / completed task                         | Bracket trio colored, body always default text       |
 | `key: value`               | Key/value pair                                | Key colored; value colored in light, default in dark |
 | `(line)` `[line]` `{line}` | Bracket / brace lines                         | Whole line, distinct char and content colors         |
 | `@mention` / `@ mention`   | Mention                                       | Token only                                           |
