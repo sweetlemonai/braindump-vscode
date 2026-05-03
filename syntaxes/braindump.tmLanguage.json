@@ -183,7 +183,7 @@
     },
 
     "bracket-line": {
-      "match": "^\\s*(\\[)([^\\[\\]]*)(\\])\\s*$",
+      "match": "^\\s*(\\[)([^\\[\\]]*)(\\])",
       "name": "markup.bracket.line.braindump",
       "captures": {
         "1": { "name": "punctuation.bracket.line.braindump" },
