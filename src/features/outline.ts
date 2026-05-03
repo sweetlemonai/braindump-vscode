@@ -1,100 +1,116 @@
 import * as vscode from 'vscode';
 
-const HEADING_RE = /^\s*(#{1,3})\s+(.+?)\s*$/;
-const CATEGORY_RE = /^\s*(={1,3})\s+(.+?)\s*$/;
-const QUESTION_RE = /^\s*\?{1,3}\s+(.+?)\s*$/;
-const STARRED_RE = /^\s*\*{1,3}\s+(.+?)\s*$/;
-
-type StructuralMarker = 'heading' | 'category';
-
-interface OutlineNode {
-  depth: number;
-  text: string;
-  marker: StructuralMarker;
-  range: vscode.Range;
-  children: OutlineNode[];
-}
-
-interface FlatItem {
-  text: string;
-  range: vscode.Range;
-}
+const HEADING_RE = /^\s*#{1,3}\s+\S/;
+const COMMENT_RE = /^\s*\/\/(?!\/)/;
+const FENCE_RE = /^```/;
 
 export class BraindumpOutlineProvider implements vscode.DocumentSymbolProvider {
   provideDocumentSymbols(
     document: vscode.TextDocument,
     _token: vscode.CancellationToken
   ): vscode.DocumentSymbol[] {
-    const tree: OutlineNode[] = [];
-    const stack: OutlineNode[] = [];
-    const questions: FlatItem[] = [];
-    const starred: FlatItem[] = [];
-
-    for (let lineNum = 0; lineNum < document.lineCount; lineNum++) {
-      const lineText = document.lineAt(lineNum).text;
-      const range = new vscode.Range(lineNum, 0, lineNum, lineText.length);
-
-      const headingMatch = HEADING_RE.exec(lineText);
-      if (headingMatch) {
-        attach(
-          { depth: headingMatch[1].length, text: headingMatch[2], marker: 'heading', range, children: [] },
-          tree,
-          stack
-        );
-        continue;
-      }
-
-      const categoryMatch = CATEGORY_RE.exec(lineText);
-      if (categoryMatch) {
-        attach(
-          { depth: categoryMatch[1].length, text: categoryMatch[2], marker: 'category', range, children: [] },
-          tree,
-          stack
-        );
-        continue;
-      }
-
-      const questionMatch = QUESTION_RE.exec(lineText);
-      if (questionMatch) {
-        questions.push({ text: questionMatch[1], range });
-        continue;
-      }
-
-      const starredMatch = STARRED_RE.exec(lineText);
-      if (starredMatch) {
-        starred.push({ text: starredMatch[1], range });
-      }
-    }
-
-    const result: vscode.DocumentSymbol[] = tree.map(toSymbol);
-
-    for (const q of questions) {
-      result.push(new vscode.DocumentSymbol(q.text, '?', vscode.SymbolKind.Event, q.range, q.range));
-    }
-    for (const s of starred) {
-      result.push(new vscode.DocumentSymbol(s.text, '*', vscode.SymbolKind.Constant, s.range, s.range));
-    }
-
-    return result;
+    const lines = collectRelevantLines(document);
+    return buildOutline(lines);
   }
 }
 
-function attach(node: OutlineNode, tree: OutlineNode[], stack: OutlineNode[]): void {
-  while (stack.length > 0 && stack[stack.length - 1].depth >= node.depth) {
-    stack.pop();
-  }
-  if (stack.length === 0) {
-    tree.push(node);
-  } else {
-    stack[stack.length - 1].children.push(node);
-  }
-  stack.push(node);
+interface LineInfo {
+  lineNum: number;
+  text: string;
+  trimmed: string;
+  indent: number;
+  isHeading: boolean;
 }
 
-function toSymbol(node: OutlineNode): vscode.DocumentSymbol {
-  const kind = node.marker === 'heading' ? vscode.SymbolKind.String : vscode.SymbolKind.Class;
-  const detail = node.marker === 'heading' ? '#'.repeat(node.depth) : '='.repeat(node.depth);
-  const sym = new vscode.DocumentSymbol(node.text, detail, kind, node.range, node.range);
-  sym.children = node.children.map(toSymbol);
-  return sym;
+function collectRelevantLines(document: vscode.TextDocument): LineInfo[] {
+  const lines: LineInfo[] = [];
+  let inFence = false;
+
+  for (let n = 0; n < document.lineCount; n++) {
+    const text = document.lineAt(n).text;
+
+    if (FENCE_RE.test(text)) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+
+    const trimmed = text.trim();
+    if (trimmed === '') continue;
+    if (COMMENT_RE.test(text)) continue;
+
+    lines.push({
+      lineNum: n,
+      text,
+      trimmed,
+      indent: countIndent(text),
+      isHeading: HEADING_RE.test(text),
+    });
+  }
+
+  return lines;
+}
+
+function countIndent(text: string): number {
+  let indent = 0;
+  for (const ch of text) {
+    if (ch === ' ') indent++;
+    else if (ch === '\t') indent += 4;
+    else break;
+  }
+  return indent;
+}
+
+function buildOutline(lines: LineInfo[]): vscode.DocumentSymbol[] {
+  const result: vscode.DocumentSymbol[] = [];
+
+  let i = 0;
+  while (i < lines.length) {
+    if (!lines[i].isHeading) {
+      i++;
+      continue;
+    }
+
+    const heading = lines[i];
+    const body: LineInfo[] = [];
+    let j = i + 1;
+    while (j < lines.length && !lines[j].isHeading) {
+      body.push(lines[j]);
+      j++;
+    }
+
+    // Determine the two outline indent depths inside this section.
+    const distinct = new Set<number>();
+    for (const line of body) {
+      if (line.indent > 0) distinct.add(line.indent);
+    }
+    const sorted = [...distinct].sort((a, b) => a - b);
+    const level2Indent = sorted[0];
+    const level3Indent = sorted[1];
+
+    const headingSym = makeSymbol(heading, vscode.SymbolKind.String);
+    let currentLevel2: vscode.DocumentSymbol = headingSym;
+
+    for (const line of body) {
+      if (level2Indent !== undefined && line.indent === level2Indent) {
+        const sym = makeSymbol(line, vscode.SymbolKind.Object);
+        headingSym.children.push(sym);
+        currentLevel2 = sym;
+      } else if (level3Indent !== undefined && line.indent === level3Indent) {
+        const sym = makeSymbol(line, vscode.SymbolKind.Variable);
+        currentLevel2.children.push(sym);
+      }
+      // Anything else (deeper indent, or indent 0) is excluded.
+    }
+
+    result.push(headingSym);
+    i = j;
+  }
+
+  return result;
+}
+
+function makeSymbol(line: LineInfo, kind: vscode.SymbolKind): vscode.DocumentSymbol {
+  const range = new vscode.Range(line.lineNum, 0, line.lineNum, line.text.length);
+  return new vscode.DocumentSymbol(line.trimmed, '', kind, range, range);
 }
