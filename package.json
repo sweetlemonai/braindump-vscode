@@ -81,6 +81,10 @@
       }
     ],
     "configurationDefaults": {
+      "[braindump]": {
+        "editor.bracketPairColorization.enabled": false,
+        "editor.guides.bracketPairs": false
+      },
       "editor.tokenColorCustomizations": {
         "textMateRules": [
           {
