@@ -477,7 +477,7 @@ Last lines, no trailing newline issues:
 
 [ ] task with @mention inside
 [x] done task with https://url.com inline
-[ ] task with "quoted string" inside
+[x] task with "quoted string" inside
 
 [Bracket label here]      ← bracket-line, NOT task
 [longer label content]    ← bracket-line, NOT task
