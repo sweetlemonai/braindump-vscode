@@ -1,0 +1,274 @@
+// Token registry, palette loading, and color math for the color settings panel.
+
+export type TokenId =
+  | 'heading'
+  | 'category'
+  | 'section'
+  | 'bullet'
+  | 'important'
+  | 'forward'
+  | 'back'
+  | 'numbered'
+  | 'lettered'
+  | 'key'
+  | 'question'
+  | 'alert'
+  | 'mention'
+  | 'comment'
+  | 'url'
+  | 'flag'
+  | 'string'
+  | 'paren'
+  | 'bracket'
+  | 'brace';
+
+export type ColorMap = Record<TokenId, string>;
+
+export type GroupId = 'containers' | 'items' | 'annotations' | 'inline';
+
+export interface TokenDef {
+  id: TokenId;
+  label: string;
+  group: GroupId;
+  // The depth-1 scope (or sole scope, for non-depth tokens) — the value users edit.
+  scope: string;
+  // True if this token has depth-2 and depth-3 variants auto-derived from depth-1.
+  depthAware: boolean;
+  // A short preview string that hints at what the token looks like in a .bd file.
+  preview: string;
+  // Whether the preview marker color should fill the entire preview ("line"-style)
+  // or only color the leading marker glyph ("marker"-style).
+  previewMode: 'line' | 'marker';
+}
+
+export const GROUPS: { id: GroupId; label: string }[] = [
+  { id: 'containers', label: 'Containers' },
+  { id: 'items', label: 'Items' },
+  { id: 'annotations', label: 'Annotations' },
+  { id: 'inline', label: 'Inline' },
+];
+
+export const TOKENS: TokenDef[] = [
+  { id: 'heading',   label: 'Heading',       group: 'containers',  scope: 'markup.heading.depth-1.braindump',   depthAware: true,  preview: '# Heading',     previewMode: 'line'   },
+  { id: 'category',  label: 'Category',      group: 'containers',  scope: 'markup.category.depth-1.braindump',  depthAware: true,  preview: '= Category',    previewMode: 'line'   },
+  { id: 'section',   label: 'Section',       group: 'containers',  scope: 'markup.section.depth-1.braindump',   depthAware: true,  preview: '+ Section',     previewMode: 'line'   },
+
+  { id: 'bullet',    label: 'Bullet',        group: 'items',       scope: 'keyword.bullet.depth-1.braindump',   depthAware: true,  preview: '- bullet',      previewMode: 'marker' },
+  { id: 'important', label: 'Important',     group: 'items',       scope: 'keyword.priority.depth-1.braindump', depthAware: true,  preview: '* important',   previewMode: 'marker' },
+  { id: 'forward',   label: 'Forward',       group: 'items',       scope: 'markup.forward.depth-1.braindump',   depthAware: true,  preview: '> forward',     previewMode: 'line'   },
+  { id: 'back',      label: 'Back',          group: 'items',       scope: 'keyword.back.depth-1.braindump',     depthAware: true,  preview: '< back',        previewMode: 'line'   },
+  { id: 'numbered',  label: 'Numbered list', group: 'items',       scope: 'markup.list.numbered.braindump',     depthAware: false, preview: '1. item',       previewMode: 'line'   },
+  { id: 'lettered',  label: 'Lettered list', group: 'items',       scope: 'markup.list.lettered.braindump',     depthAware: false, preview: 'a. item',       previewMode: 'line'   },
+  { id: 'key',       label: 'Key',           group: 'items',       scope: 'keyword.field.braindump',            depthAware: false, preview: 'name:',         previewMode: 'marker' },
+
+  { id: 'question',  label: 'Question',      group: 'annotations', scope: 'markup.question.depth-1.braindump',  depthAware: true,  preview: '? question',    previewMode: 'line'   },
+  { id: 'alert',     label: 'Alert',         group: 'annotations', scope: 'markup.alert.braindump',             depthAware: false, preview: '! alert',       previewMode: 'line'   },
+  { id: 'mention',   label: 'Mention',       group: 'annotations', scope: 'keyword.mention.braindump',          depthAware: false, preview: '@alice',        previewMode: 'marker' },
+  { id: 'comment',   label: 'Comment',       group: 'annotations', scope: 'comment.line.double-slash.braindump',depthAware: false, preview: '// comment',    previewMode: 'line'   },
+
+  { id: 'url',       label: 'URL',           group: 'inline',      scope: 'markup.underline.link.braindump',    depthAware: false, preview: 'https://x.com', previewMode: 'marker' },
+  { id: 'flag',      label: 'Flag',          group: 'inline',      scope: 'keyword.flag.braindump',             depthAware: false, preview: '--flag',        previewMode: 'marker' },
+  { id: 'string',    label: 'String',        group: 'inline',      scope: 'string.quoted.double.braindump',     depthAware: false, preview: '"quoted"',      previewMode: 'marker' },
+  { id: 'paren',     label: 'Paren label',   group: 'inline',      scope: 'markup.paren.line.content.braindump',depthAware: false, preview: '(label)',       previewMode: 'marker' },
+  { id: 'bracket',   label: 'Bracket label', group: 'inline',      scope: 'markup.bracket.line.content.braindump', depthAware: false, preview: '[label]',    previewMode: 'marker' },
+  { id: 'brace',     label: 'Brace label',   group: 'inline',      scope: 'markup.brace.line.braindump',        depthAware: false, preview: '{label}',       previewMode: 'line'   },
+];
+
+const TOKEN_BY_SCOPE = new Map(TOKENS.map((t) => [t.scope, t]));
+
+interface RawRule {
+  scope?: string;
+  settings?: { foreground?: string };
+}
+
+// Walk a textMateRules array (from package.json or from user settings) and
+// pull out the foreground color for each editable token's depth-1 scope.
+// Falls back to `defaults` for any scope that isn't present.
+export function colorsFromRules(rules: RawRule[] | undefined, defaults: ColorMap): ColorMap {
+  const out: ColorMap = { ...defaults };
+  if (!rules) return out;
+  for (const rule of rules) {
+    const def = rule.scope ? TOKEN_BY_SCOPE.get(rule.scope) : undefined;
+    const fg = rule.settings?.foreground;
+    if (def && fg) out[def.id] = normalizeHex(fg);
+  }
+  return out;
+}
+
+// Pulls the dark and light palettes out of the bundled package.json so the
+// "Original" and "Light" presets always match what the extension ships.
+export function readBundledPalettes(packageJSON: unknown): { dark: ColorMap; light: ColorMap } {
+  const seed = TOKENS.reduce<ColorMap>((acc, t) => {
+    acc[t.id] = '#000000';
+    return acc;
+  }, {} as ColorMap);
+
+  const root = (packageJSON as { contributes?: { configurationDefaults?: Record<string, unknown> } }).contributes
+    ?.configurationDefaults as Record<string, unknown> | undefined;
+  const tcc = (root?.['editor.tokenColorCustomizations'] as Record<string, unknown>) ?? {};
+  const darkRules = tcc.textMateRules as RawRule[] | undefined;
+  const lightRules = (tcc['[*Light*]'] as { textMateRules?: RawRule[] } | undefined)?.textMateRules;
+
+  return {
+    dark: colorsFromRules(darkRules, seed),
+    light: colorsFromRules(lightRules, seed),
+  };
+}
+
+// ---------- color math ----------
+
+function normalizeHex(hex: string): string {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  return m ? '#' + m[1].toUpperCase() : hex;
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex);
+  if (!m) return [0, 0, 0];
+  return [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)];
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+  const c = (n: number) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0');
+  return ('#' + c(r) + c(g) + c(b)).toUpperCase();
+}
+
+// Multiply each RGB channel by (1 - percent/100). Used for depth-2/3 gradients.
+export function darken(hex: string, percent: number): string {
+  const [r, g, b] = hexToRgb(hex);
+  const f = 1 - percent / 100;
+  return rgbToHex(r * f, g * f, b * f);
+}
+
+// Hand-tuned alternative palettes. All three are calibrated for dark themes;
+// light-theme users get the bundled "Light" preset instead.
+
+// Mono — minimal grayscale with two accents (warm for alarms, cool for
+// metadata/links). For users who want sigils to do the talking and color to
+// stay out of the way.
+const MONO: ColorMap = {
+  heading:   '#D8D8D8',
+  category:  '#B8B8B8',
+  section:   '#B8B8B8',
+  bullet:    '#989898',
+  important: '#D8A058',
+  forward:   '#989898',
+  back:      '#989898',
+  numbered:  '#989898',
+  lettered:  '#989898',
+  key:       '#98AAC8',
+  question:  '#989898',
+  alert:     '#D8A058',
+  mention:   '#98AAC8',
+  comment:   '#787878',
+  url:       '#98AAC8',
+  flag:      '#787878',
+  string:    '#B8B8B8',
+  paren:     '#989898',
+  bracket:   '#989898',
+  brace:     '#989898',
+};
+
+// Sunset — single-family warm palette: oranges, ambers, terracottas, peach.
+// Important breaks to a brighter red so it still reads as alarm.
+const SUNSET: ColorMap = {
+  heading:   '#E8782A',
+  category:  '#D89A40',
+  section:   '#C85838',
+  bullet:    '#C8A068',
+  important: '#E03820',
+  forward:   '#D8B068',
+  back:      '#A88858',
+  numbered:  '#DAA520',
+  lettered:  '#DAA520',
+  key:       '#E8C078',
+  question:  '#B89058',
+  alert:     '#F0B820',
+  mention:   '#D88060',
+  comment:   '#886850',
+  url:       '#C8A888',
+  flag:      '#A08868',
+  string:    '#E8B048',
+  paren:     '#B0905C',
+  bracket:   '#D8A858',
+  brace:     '#C85838',
+};
+
+// Ocean — single-family cool palette: blues, teals, sea-greens, sage. One
+// red break for important so warnings don't disappear into the cool wash.
+const OCEAN: ColorMap = {
+  heading:   '#58A8D8',
+  category:  '#209BC8',
+  section:   '#5078A8',
+  bullet:    '#80B098',
+  important: '#D85858',
+  forward:   '#2A9097',
+  back:      '#6B9080',
+  numbered:  '#5C8F50',
+  lettered:  '#5C8F50',
+  key:       '#50B0C8',
+  question:  '#50A878',
+  alert:     '#98B048',
+  mention:   '#8090D0',
+  comment:   '#6080A0',
+  url:       '#80A0D8',
+  flag:      '#5878A0',
+  string:    '#98B0A8',
+  paren:     '#5C8F50',
+  bracket:   '#6B9080',
+  brace:     '#5078A8',
+};
+
+export type PresetId = 'original' | 'minimal' | 'sunset' | 'ocean' | 'light';
+
+export const PRESET_LABELS: Record<PresetId, string> = {
+  original: 'Original',
+  minimal: 'Minimal',
+  sunset: 'Sunset',
+  ocean: 'Ocean',
+  light: 'Light',
+};
+
+export function buildAllPresets(packageJSON: unknown): Record<PresetId, ColorMap> {
+  const { dark, light } = readBundledPalettes(packageJSON);
+  return {
+    original: dark,
+    minimal: MONO,
+    sunset: SUNSET,
+    ocean: OCEAN,
+    light,
+  };
+}
+
+// Returns the matching preset id if the given colors match one exactly,
+// otherwise null. Comparison is case-insensitive on hex.
+export function matchPreset(
+  colors: ColorMap,
+  presets: Record<PresetId, ColorMap>
+): PresetId | null {
+  for (const id of Object.keys(presets) as PresetId[]) {
+    if (TOKENS.every((t) => sameHex(colors[t.id], presets[id][t.id]))) return id;
+  }
+  return null;
+}
+
+function sameHex(a: string, b: string): boolean {
+  return normalizeHex(a) === normalizeHex(b);
+}
+
+// Build the full textMateRules array for user settings: depth-1 from the user's
+// picked colors, depth-2/3 auto-derived for depth-aware tokens.
+export function buildTextMateRules(colors: ColorMap): { scope: string; settings: { foreground: string } }[] {
+  const rules: { scope: string; settings: { foreground: string } }[] = [];
+  for (const t of TOKENS) {
+    const c = colors[t.id];
+    rules.push({ scope: t.scope, settings: { foreground: c } });
+    if (t.depthAware) {
+      const base = t.scope.replace('depth-1', 'depth-2');
+      const deeper = t.scope.replace('depth-1', 'depth-3');
+      rules.push({ scope: base, settings: { foreground: darken(c, 10) } });
+      rules.push({ scope: deeper, settings: { foreground: darken(c, 20) } });
+    }
+  }
+  return rules;
+}

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.0 — 2026-05-03
+
+- **Color customization panel.** New command `Braindump: Customize colors` opens a webview with five preset palettes (Original, Minimal, Sunset, Ocean, Light) and a per-token color picker for every depth-1 token. Customizations save to user `settings.json` under the `[braindump]` scope; depth-2/3 colors auto-derive as 10%/20% darker.
+- **Syntax reference command.** `Braindump: Show syntax reference` opens an untitled `.bd` buffer demonstrating every marker in idiomatic usage.
+- **File icon.** `.bd` files now show a dedicated icon in the editor tab and (where supported) the file explorer.
+- **Multi-word keys.** Key/value highlighting now accepts space-separated keys (`due date: tomorrow`), not just single-word identifiers.
+- **Back marker recolor.** `<` / `<<` / `<<<` shifted from blue to sage green so they no longer collide with the cyan category (`=`) family while still pairing with the teal forward (`>`).
+- Task body Cmd/Ctrl-click underline no longer extends across the leading space between the bracket and the body text.
+
 ## 1.3.0 — 2026-05-03
 
 First release with runtime code (TS + esbuild bundle).

@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import { SHOW_CHEAT_SHEET_COMMAND, showCheatSheet } from './features/cheatSheet';
+import { OPEN_COLOR_SETTINGS_COMMAND, openColorSettings } from './features/colorSettings';
 import { registerMentionCompletion } from './features/mentionComplete';
 import { BraindumpOutlineProvider } from './features/outline';
 import { registerStatusBar } from './features/statusBar';
@@ -20,6 +22,11 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.languages.registerDocumentSymbolProvider(SELECTOR, new BraindumpOutlineProvider()),
     vscode.languages.registerDocumentLinkProvider(SELECTOR, new BraindumpTaskBodyLinkProvider()),
     vscode.commands.registerCommand(TOGGLE_COMMAND, toggleTask),
+    vscode.commands.registerCommand(SHOW_CHEAT_SHEET_COMMAND, showCheatSheet),
+    vscode.commands.registerCommand(OPEN_COLOR_SETTINGS_COMMAND, () => {
+      const ext = context.extension;
+      openColorSettings(ext);
+    }),
     registerBracketClickToggle(),
     registerMentionCompletion()
   );

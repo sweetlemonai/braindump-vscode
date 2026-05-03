@@ -182,6 +182,10 @@ Colors are contributed via `configurationDefaults.editor.tokenColorCustomization
 
 The dark palette is the default. The light palette is contributed via the `[*Light*]` theme-name glob, which matches "Default Light+", "GitHub Light", "Solarized Light", "Quiet Light", and similar. Themes that are visually light but don't include `Light` in their name will receive the dark palette by default; see Troubleshooting below for the workaround.
 
+## Customizing colors
+
+Open the panel via `Cmd+Shift+P` → **"Braindump: Customize colors"**. Pick one of the four bundled presets (Original, Muted, High contrast, Light) for a one-click palette, or fine-tune individual token colors with the per-token color pickers below. Customizations save to your user `settings.json` under the `[braindump]` scope, and persist across machines via VS Code Settings Sync.
+
 ## Troubleshooting
 
 **My notes aren't colored.** Check the bottom-right of the status bar. If it says "Plain Text," click it and pick "Braindump" from the list. Saving with a `.bd` extension should make this automatic next time.

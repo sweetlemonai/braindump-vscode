@@ -2,7 +2,7 @@
   "name": "braindump",
   "displayName": "Braindump Notes",
   "description": "Syntax highlighting for the Braindump note-taking syntax (.bd files).",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "publisher": "purple-vision",
   "license": "MIT",
   "engines": {
@@ -56,7 +56,11 @@
         "extensions": [
           ".bd"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./images/bd-file.svg",
+          "dark": "./images/bd-file.svg"
+        }
       }
     ],
     "grammars": [
@@ -70,6 +74,14 @@
       {
         "command": "braindump.toggleTask",
         "title": "Braindump: Toggle Task"
+      },
+      {
+        "command": "braindump.showCheatSheet",
+        "title": "Braindump: Show syntax reference"
+      },
+      {
+        "command": "braindump.openColorSettings",
+        "title": "Braindump: Customize colors"
       }
     ],
     "keybindings": [
