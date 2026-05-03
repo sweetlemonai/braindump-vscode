@@ -30,7 +30,8 @@
         { "include": "#string" },
         { "include": "#url" },
         { "include": "#flag" },
-        { "include": "#mention" }
+        { "include": "#mention-line" },
+        { "include": "#mention-word" }
       ]
     },
 
@@ -307,8 +308,20 @@
       "name": "keyword.flag.braindump"
     },
 
-    "mention": {
-      "match": "(?<!\\S)@\\s?[\\p{L}\\p{N}][\\p{L}\\p{N}_-]*",
+    "mention-line": {
+      "begin": "(?<!\\S)@(?=\\s)",
+      "end": "$",
+      "name": "keyword.mention.braindump",
+      "patterns": [
+        {
+          "match": "//(?!/).*$",
+          "name": "comment.line.double-slash.braindump"
+        }
+      ]
+    },
+
+    "mention-word": {
+      "match": "(?<!\\S)@[\\p{L}\\p{N}][\\p{L}\\p{N}_-]*",
       "name": "keyword.mention.braindump"
     }
   }

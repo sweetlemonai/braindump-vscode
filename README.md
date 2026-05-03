@@ -22,7 +22,7 @@ Braindump isn't a Markdown replacement, a wiki, or a personal-knowledge-manageme
 
 ## What you get
 
-**Tasks.** Write `[ ]` for an open task, `[x]` for done. Click the checkbox to toggle, or hit `Cmd+Shift+Enter` (Mac) / `Ctrl+Shift+Enter` (Win/Linux) on the line. Done and open look the same except for the `x` itself — no strikethrough, no dimming, just clean state.
+**Tasks.** Write `[ ]` for an open task, `[x]` for done. Click the checkbox to toggle, or `Cmd+Click` (Mac) / `Ctrl+Click` (Win/Linux) anywhere on the task body. Done and open look the same except for the `x` itself — no strikethrough, no dimming, just clean state.
 
 **Customizable colors.** Open `Cmd+Shift+P` → **"Braindump: Customize colors"** to pick from five bundled presets (Original, Minimal, Sunset, Ocean, Light) or fine-tune individual token colors. Customizations save to your user settings and sync across machines via VS Code Settings Sync.
 
@@ -98,8 +98,6 @@ For every marker with worked examples, run `Braindump: Show syntax reference` fr
   }
 }
 ```
-
-**`Cmd+Shift+Enter` doesn't toggle tasks.** Another extension may have claimed the keybinding. Open Keyboard Shortcuts (`Cmd+K Cmd+S`), search `cmd+shift+enter`, look for the conflict. As a fallback, click the `[ ]` directly to toggle.
 
 **The outline is empty.** The file isn't being recognized as braindump. Same fix as the first item.
 

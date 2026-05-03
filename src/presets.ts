@@ -5,6 +5,7 @@ export type TokenId =
   | 'category'
   | 'section'
   | 'bullet'
+  | 'listAlt'
   | 'important'
   | 'forward'
   | 'back'
@@ -54,6 +55,7 @@ export const TOKENS: TokenDef[] = [
   { id: 'section',   label: 'Section',       group: 'containers',  scope: 'markup.section.depth-1.braindump',   depthAware: true,  preview: '+ Section',     previewMode: 'line'   },
 
   { id: 'bullet',    label: 'Bullet',        group: 'items',       scope: 'keyword.bullet.depth-1.braindump',   depthAware: true,  preview: '- bullet',      previewMode: 'marker' },
+  { id: 'listAlt',   label: 'List alt row',  group: 'items',       scope: 'meta.list.alt.braindump',            depthAware: false, preview: '- alt row',     previewMode: 'line'   },
   { id: 'important', label: 'Important',     group: 'items',       scope: 'keyword.priority.depth-1.braindump', depthAware: true,  preview: '* important',   previewMode: 'marker' },
   { id: 'forward',   label: 'Forward',       group: 'items',       scope: 'markup.forward.depth-1.braindump',   depthAware: true,  preview: '> forward',     previewMode: 'line'   },
   { id: 'back',      label: 'Back',          group: 'items',       scope: 'keyword.back.depth-1.braindump',     depthAware: true,  preview: '< back',        previewMode: 'line'   },
@@ -78,7 +80,12 @@ const TOKEN_BY_SCOPE = new Map(TOKENS.map((t) => [t.scope, t]));
 
 interface RawRule {
   scope?: string;
-  settings?: { foreground?: string };
+  settings?: { foreground?: string; fontStyle?: string };
+}
+
+export interface OutRule {
+  scope: string;
+  settings: { foreground?: string; fontStyle?: string };
 }
 
 // Walk a textMateRules array (from package.json or from user settings) and
@@ -151,6 +158,7 @@ const MONO: ColorMap = {
   category:  '#B8B8B8',
   section:   '#B8B8B8',
   bullet:    '#989898',
+  listAlt:   '#787878',
   important: '#D8A058',
   forward:   '#989898',
   back:      '#989898',
@@ -176,6 +184,7 @@ const SUNSET: ColorMap = {
   category:  '#D89A40',
   section:   '#C85838',
   bullet:    '#C8A068',
+  listAlt:   '#A88858',
   important: '#E03820',
   forward:   '#D8B068',
   back:      '#A88858',
@@ -201,6 +210,7 @@ const OCEAN: ColorMap = {
   category:  '#209BC8',
   section:   '#5078A8',
   bullet:    '#80B098',
+  listAlt:   '#5C7A88',
   important: '#D85858',
   forward:   '#2A9097',
   back:      '#6B9080',
@@ -257,9 +267,11 @@ function sameHex(a: string, b: string): boolean {
 }
 
 // Build the full textMateRules array for user settings: depth-1 from the user's
-// picked colors, depth-2/3 auto-derived for depth-aware tokens.
-export function buildTextMateRules(colors: ColorMap): { scope: string; settings: { foreground: string } }[] {
-  const rules: { scope: string; settings: { foreground: string } }[] = [];
+// picked colors, depth-2/3 auto-derived for depth-aware tokens, plus any
+// bundled non-editable scopes (task brackets, key value, priority bold, etc.)
+// so saving the panel doesn't strip them.
+export function buildTextMateRules(colors: ColorMap, fixed: OutRule[] = []): OutRule[] {
+  const rules: OutRule[] = [];
   for (const t of TOKENS) {
     const c = colors[t.id];
     rules.push({ scope: t.scope, settings: { foreground: c } });
@@ -269,6 +281,51 @@ export function buildTextMateRules(colors: ColorMap): { scope: string; settings:
       rules.push({ scope: base, settings: { foreground: darken(c, 10) } });
       rules.push({ scope: deeper, settings: { foreground: darken(c, 20) } });
     }
+    // Paren and bracket lines use a swapped two-color scheme: a paren line's
+    // brackets share the bracket-content color and vice-versa. So the panel's
+    // "Paren label" color is written to paren content + bracket punctuation;
+    // "Bracket label" color is written to bracket content + paren punctuation.
+    if (t.id === 'paren') {
+      rules.push({ scope: 'punctuation.bracket.line.braindump', settings: { foreground: c } });
+    } else if (t.id === 'bracket') {
+      rules.push({ scope: 'punctuation.paren.line.braindump', settings: { foreground: c } });
+    }
   }
+  rules.push(...fixed);
   return rules;
+}
+
+// Pull bundled rules for scopes that the panel does NOT expose (task bracket,
+// key value, priority bold, source default, etc.) so they survive a save.
+// `kind` picks the bundled palette: dark uses top-level rules, light uses the
+// [*Light*] override block.
+export function bundledFixedRules(packageJSON: unknown, kind: 'dark' | 'light'): OutRule[] {
+  const root = (packageJSON as { contributes?: { configurationDefaults?: Record<string, unknown> } }).contributes
+    ?.configurationDefaults as Record<string, unknown> | undefined;
+  const tcc = (root?.['editor.tokenColorCustomizations'] as Record<string, unknown>) ?? {};
+  const allRules =
+    kind === 'dark'
+      ? (tcc.textMateRules as RawRule[] | undefined)
+      : (tcc['[*Light*]'] as { textMateRules?: RawRule[] } | undefined)?.textMateRules;
+  if (!allRules) return [];
+
+  const editableScopes = new Set<string>();
+  for (const t of TOKENS) {
+    editableScopes.add(t.scope);
+    if (t.depthAware) {
+      editableScopes.add(t.scope.replace('depth-1', 'depth-2'));
+      editableScopes.add(t.scope.replace('depth-1', 'depth-3'));
+    }
+  }
+  // Punctuation scopes are also handled by buildTextMateRules (mirrored from
+  // the paren/bracket content color), so exclude them too.
+  editableScopes.add('punctuation.paren.line.braindump');
+  editableScopes.add('punctuation.bracket.line.braindump');
+
+  const out: OutRule[] = [];
+  for (const r of allRules) {
+    if (!r.scope || editableScopes.has(r.scope)) continue;
+    out.push({ scope: r.scope, settings: { ...r.settings } });
+  }
+  return out;
 }

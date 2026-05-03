@@ -2,7 +2,7 @@
   "name": "braindump",
   "displayName": "Braindump Notes",
   "description": "Syntax highlighting for the Braindump note-taking syntax (.bd files).",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "publisher": "purple-vision",
   "license": "MIT",
   "engines": {
@@ -321,25 +321,31 @@
           {
             "scope": "punctuation.paren.line.braindump",
             "settings": {
-              "foreground": "#DAA520"
+              "foreground": "#5C8F3A"
             }
           },
           {
             "scope": "markup.paren.line.content.braindump",
             "settings": {
-              "foreground": "#5C8F3A"
+              "foreground": "#DAA520"
             }
           },
           {
             "scope": "punctuation.bracket.line.braindump",
             "settings": {
-              "foreground": "#5C8F3A"
+              "foreground": "#DAA520"
             }
           },
           {
             "scope": "markup.bracket.line.content.braindump",
             "settings": {
-              "foreground": "#DAA520"
+              "foreground": "#5C8F3A"
+            }
+          },
+          {
+            "scope": "meta.list.alt.braindump",
+            "settings": {
+              "foreground": "#A693C0"
             }
           },
           {
@@ -585,25 +591,31 @@
             {
               "scope": "punctuation.paren.line.braindump",
               "settings": {
-                "foreground": "#A16207"
+                "foreground": "#3F6212"
               }
             },
             {
               "scope": "markup.paren.line.content.braindump",
               "settings": {
-                "foreground": "#3F6212"
+                "foreground": "#A16207"
               }
             },
             {
               "scope": "punctuation.bracket.line.braindump",
               "settings": {
-                "foreground": "#3F6212"
+                "foreground": "#A16207"
               }
             },
             {
               "scope": "markup.bracket.line.content.braindump",
               "settings": {
-                "foreground": "#A16207"
+                "foreground": "#3F6212"
+              }
+            },
+            {
+              "scope": "meta.list.alt.braindump",
+              "settings": {
+                "foreground": "#5B5475"
               }
             },
             {

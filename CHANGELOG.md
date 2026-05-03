@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.0 — 2026-05-03
+
+- **Heading folding.** `#` / `##` / `###` heading lines and depth-1 `=` lines now collapse to a folding range, scoped by depth (a `##` folds until the next `##` or `#`; a `=` folds until the next `=` or any `#`).
+- **Zebra no longer clobbers inline tokens.** Strings, mentions, URLs, and `--flags` keep their own color on alt-colored bullet rows; the zebra decoration now skips inline-token ranges instead of painting over them.
+- **`@` mention rewrite.** Two rules: `@word` stops at the first whitespace; `@ word word word` extends to end of line. A trailing `// comment` on a `@ ` line terminates the mention and renders as a comment. `foo@bar.com` is still plain text.
+- **Bracket / paren coloring restored after save.** The colors panel now writes the punctuation scopes alongside the content scopes, so a saved palette no longer drops the `(` `)` `[` `]` colors.
+- **Editable list-alt (zebra) color.** New "List alt row" entry in the colors panel; saved alongside other tokens, picked up live by the zebra decoration.
+
 ## 1.4.1 — 2026-05-03
 
 - README rewrite for clarity, plus screenshots of the customization panel and refreshed syntax sample.

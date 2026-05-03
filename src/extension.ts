@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { SHOW_CHEAT_SHEET_COMMAND, showCheatSheet } from './features/cheatSheet';
-import { OPEN_COLOR_SETTINGS_COMMAND, openColorSettings } from './features/colorSettings';
+import { OPEN_COLOR_SETTINGS_COMMAND, migrateLegacyRules, openColorSettings } from './features/colorSettings';
+import { BraindumpFoldingProvider } from './features/folding';
 import { registerMentionCompletion } from './features/mentionComplete';
 import { BraindumpOutlineProvider } from './features/outline';
 import { registerStatusBar } from './features/statusBar';
@@ -20,6 +21,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
   context.subscriptions.push(
     vscode.languages.registerDocumentSymbolProvider(SELECTOR, new BraindumpOutlineProvider()),
+    vscode.languages.registerFoldingRangeProvider(SELECTOR, new BraindumpFoldingProvider()),
     vscode.languages.registerDocumentLinkProvider(SELECTOR, new BraindumpTaskBodyLinkProvider()),
     vscode.commands.registerCommand(TOGGLE_COMMAND, toggleTask),
     vscode.commands.registerCommand(SHOW_CHEAT_SHEET_COMMAND, showCheatSheet),
@@ -33,6 +35,8 @@ export function activate(context: vscode.ExtensionContext): void {
   registerBracketHoverCursor(context);
   registerStatusBar(context);
   registerBulletZebra(context);
+
+  void migrateLegacyRules(context.extension.packageJSON);
 }
 
 export function deactivate(): void {}

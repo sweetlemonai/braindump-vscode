@@ -5,11 +5,56 @@ import {
   PresetId,
   buildAllPresets,
   buildTextMateRules,
+  bundledFixedRules,
   colorsFromRules,
   matchPreset,
 } from '../presets';
 
 export const OPEN_COLOR_SETTINGS_COMMAND = 'braindump.openColorSettings';
+
+// Scopes added in 1.5.0 that older saved customizations are missing. If we
+// see a non-empty user textMateRules but none of these scopes, we rewrite the
+// rules with the user's existing colors plus the full set of bundled scopes
+// so previously-uneditable colors (task brackets, list-alt, paren/bracket
+// punctuation) come back without the user having to click Reset.
+const REQUIRED_SCOPES_1_5 = [
+  'markup.task.bracket.braindump',
+  'meta.list.alt.braindump',
+  'punctuation.paren.line.braindump',
+  'punctuation.bracket.line.braindump',
+];
+
+export async function migrateLegacyRules(packageJSON: unknown): Promise<void> {
+  const config = vscode.workspace.getConfiguration('editor', { languageId: 'braindump' });
+  const tcc = config.get<{ textMateRules?: { scope?: string; settings?: { foreground?: string } }[] }>(
+    'tokenColorCustomizations'
+  );
+  const rules = tcc?.textMateRules;
+  if (!rules || rules.length === 0) return;
+
+  const scopes = new Set(rules.map((r) => r.scope).filter(Boolean));
+  const missingRequired = !REQUIRED_SCOPES_1_5.every((s) => scopes.has(s));
+
+  // Detect a stale paren/bracket mirror: the swap convention is
+  // paren-punct == bracket-content, paren-content == bracket-punct. If a
+  // previous save matched punctuation to its own content (no swap), rewrite.
+  const fg = (scope: string): string | undefined =>
+    rules.find((r) => r.scope === scope)?.settings?.foreground?.toLowerCase();
+  const parenPunct = fg('punctuation.paren.line.braindump');
+  const parenContent = fg('markup.paren.line.content.braindump');
+  const bracketPunct = fg('punctuation.bracket.line.braindump');
+  const bracketContent = fg('markup.bracket.line.content.braindump');
+  const swapWrong =
+    !!parenPunct && !!parenContent && !!bracketPunct && !!bracketContent &&
+    (parenPunct === parenContent || bracketPunct === bracketContent);
+
+  if (!missingRequired && !swapWrong) return;
+
+  const presets = buildAllPresets(packageJSON);
+  const defaults = currentThemeKind() === 'light' ? presets.light : presets.original;
+  const colors = colorsFromRules(rules, defaults);
+  await writeColorsTo(colors, packageJSON);
+}
 
 let panel: vscode.WebviewPanel | undefined;
 
@@ -35,7 +80,7 @@ export function openColorSettings(extension: vscode.Extension<unknown>): void {
 
   panel.webview.onDidReceiveMessage(async (msg: { type: string; colors?: ColorMap }) => {
     if (msg.type === 'save' && msg.colors) {
-      await writeColors(msg.colors);
+      await writeColorsTo(msg.colors, extension.packageJSON);
       panel?.webview.postMessage({ type: 'savedConfirmation' });
     } else if (msg.type === 'resetToOriginal') {
       const ok = await vscode.window.showWarningMessage(
@@ -44,7 +89,7 @@ export function openColorSettings(extension: vscode.Extension<unknown>): void {
         'Reset'
       );
       if (ok !== 'Reset') return;
-      await writeColors(presets.original);
+      await writeColorsTo(presets.original, extension.packageJSON);
       panel?.webview.postMessage({
         type: 'colorsUpdated',
         colors: presets.original,
@@ -79,14 +124,19 @@ function readEffectiveColors(defaults: ColorMap): ColorMap {
   return colorsFromRules(tcc?.textMateRules, defaults);
 }
 
-async function writeColors(colors: ColorMap): Promise<void> {
-  const rules = buildTextMateRules(colors);
+async function writeColorsTo(colors: ColorMap, packageJSON: unknown): Promise<void> {
+  const fixed = bundledFixedRules(packageJSON, currentThemeKind());
+  const rules = buildTextMateRules(colors, fixed);
   const config = vscode.workspace.getConfiguration('editor', { languageId: 'braindump' });
   await config.update(
     'tokenColorCustomizations',
     { textMateRules: rules },
     vscode.ConfigurationTarget.Global
   );
+}
+
+function currentThemeKind(): 'dark' | 'light' {
+  return vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Light ? 'light' : 'dark';
 }
 
 function makeNonce(): string {
