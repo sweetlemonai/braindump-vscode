@@ -319,6 +319,12 @@
             }
           },
           {
+            "scope": "markup.task.bracket.braindump",
+            "settings": {
+              "foreground": "#DD6BA7"
+            }
+          },
+          {
             "scope": "string.quoted.double.braindump",
             "settings": {
               "foreground": "#E8B048"
@@ -572,6 +578,12 @@
             },
             {
               "scope": "markup.brace.line.braindump",
+              "settings": {
+                "foreground": "#BE185D"
+              }
+            },
+            {
+              "scope": "markup.task.bracket.braindump",
               "settings": {
                 "foreground": "#BE185D"
               }

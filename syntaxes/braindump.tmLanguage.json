@@ -14,6 +14,7 @@
     { "include": "#forward" },
     { "include": "#brace-line" },
     { "include": "#paren-line" },
+    { "include": "#task" },
     { "include": "#bracket-line" },
     { "include": "#list-numbered" },
     { "include": "#list-lettered" },
@@ -186,6 +187,13 @@
         "1": { "name": "punctuation.bracket.line.braindump" },
         "2": { "name": "markup.bracket.line.content.braindump" },
         "3": { "name": "punctuation.bracket.line.braindump" }
+      }
+    },
+
+    "task": {
+      "match": "^\\s*(\\[[ xX]\\])(?=\\s|$)",
+      "captures": {
+        "1": { "name": "markup.task.bracket.braindump" }
       }
     },
 
