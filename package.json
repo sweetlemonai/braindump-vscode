@@ -335,7 +335,7 @@
           {
             "scope": "markup.task.bracket.braindump",
             "settings": {
-              "foreground": "#A78BFA"
+              "foreground": "#DD6BA7"
             }
           },
           {
@@ -599,7 +599,7 @@
             {
               "scope": "markup.task.bracket.braindump",
               "settings": {
-                "foreground": "#6D28D9"
+                "foreground": "#BE185D"
               }
             },
             {
