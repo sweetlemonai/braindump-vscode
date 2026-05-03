@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { BraindumpOutlineProvider } from './features/outline';
+import { registerStatusBar } from './features/statusBar';
 import {
   BraindumpTaskBodyLinkProvider,
   TOGGLE_COMMAND,
@@ -20,6 +21,7 @@ export function activate(context: vscode.ExtensionContext): void {
     registerBracketClickToggle()
   );
   registerBracketHoverCursor(context);
+  registerStatusBar(context);
 }
 
 export function deactivate(): void {}
