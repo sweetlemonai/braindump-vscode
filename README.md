@@ -143,25 +143,36 @@ Full positive, negative, and edge-case coverage lives in `sample.bd`.
 
 ## What you get
 
-**Outline panel.** Press `Cmd+Shift+O` (Mac) / `Ctrl+Shift+O` (Windows/Linux) to jump to any heading, category, section, question, or starred item in the current file.
+**Outline panel.** Press `Cmd+Shift+O` (Mac) / `Ctrl+Shift+O` (Windows/Linux) — or open the Outline view in the sidebar — to navigate the structure of your note. The outline is **indentation-driven, three levels max**:
 
-**Status bar info.** A compact counter at the bottom shows word count, open question count, and task progress for the current file: `1234w  ?3  √4/12`.
+- Level 1: every `#` / `##` / `###` heading (depth distinction collapsed; all flat at top level)
+- Level 2: lines at the shallowest non-zero indent inside each heading's body, regardless of marker
+- Level 3: lines at the next-deeper indent
 
-**Mention completion.** Type `@` and pick from the names you've already mentioned in this file, sorted by how often you use them.
+Anything more deeply indented than level 3 is excluded. Comments (`//`) and fenced code blocks are excluded too. The entry name is the line text with the marker preserved.
 
-**Folding.** Collapse any heading-family section by clicking the gutter triangle. Headings, categories, and sections all fold independently.
+**Status bar.** A compact indicator at the bottom-right shows the shape of the current file:
 
-**Indent-aware coloring.** Long bullet and list runs modulate their text color slightly with each indent level, so deeply nested children read as quieter than their parents. Structure becomes visible at a glance.
+```
+1234w  ?3  √4/12
+```
 
-**Snippets.** Type these and press `Tab`:
+Word count, then `?` + open question count (only if there are any), then `√` + done/total task count (only if there are any tasks). Disappears entirely when the active editor isn't a `.bd` file. Updates as you type.
 
-| Type           | You get            |
-| -------------- | ------------------ |
-| `today`        | Today's date       |
-| `h1` `h2` `h3` | Heading markers    |
-| `q`            | `?` for a question |
-| `imp`          | `!` for important  |
-| `kv`           | `key: value` pair  |
+**Tasks.** Two new line types:
+
+```
+[ ] open task
+[x] completed task   (X also accepted)
+```
+
+The bracket trio is colored. Body text stays default — done and open tasks look identical except for the `x` itself, no strikethrough or dimming. Toggle by **single-clicking the bracket** (cursor changes to a pointer on hover), **Cmd/Ctrl-clicking the body text**, or pressing `Cmd+Shift+Enter` (Mac) / `Ctrl+Shift+Enter` (Win/Linux) on a task line. The cursor stays put when toggled. Pressing the keybinding on a non-task line is a silent no-op.
+
+Disambiguator vs. bracket-line labels: a task has exactly a single space, `x`, or `X` between the brackets. `[Bracket label here]`, `[a]`, `[xy]` all stay bracket-line labels.
+
+**Mention completion.** Type `@` in a `.bd` file and a completion dropdown shows every `@name` already used in this file, sorted by how often you use them. Email addresses (`foo@bar.com`) and URL fragments don't pollute the list.
+
+**Bullet zebra.** Long uniform `-` bullet lists get alternating-row coloring on the body text so the eye picks up rhythm. Marker stays its lavender color; only the body text alternates. The zebra index resets on every blank line and on every non-bullet line — two separate runs don't share an index. Numbered lists (`1.`), lettered lists (`a.`), and tasks (`[ ]`) are excluded. Updates without a reload when you switch between light and dark themes.
 
 ## How the colors work
 

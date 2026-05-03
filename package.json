@@ -2,7 +2,7 @@
   "name": "braindump-language",
   "displayName": "Braindump",
   "description": "Syntax highlighting for the Braindump note-taking syntax (.bd files).",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "publisher": "sweet-lemon",
   "license": "MIT",
   "engines": {
