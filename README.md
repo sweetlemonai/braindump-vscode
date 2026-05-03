@@ -1,92 +1,197 @@
 <div align="center">
-  <img src="images/braindump.png" alt="Braindump logo" width="128" />
+  <img src="https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/braindump.png" alt="Braindump logo" width="128" />
   <h1>Braindump</h1>
-  <p>Syntax highlighting for <code>.bd</code> note-taking files in VS Code.</p>
+  <p><strong>A note-taking syntax for people who think in plain text.</strong></p>
 </div>
 
 ---
 
-Braindump is a lightweight note syntax built around line-leading markers (`#`, `+`, `-`, `*`, `?`, `!`, `>`, `<`, `//`) and a few inline tokens (`@mention`, `--flag`, URLs, `"strings"`). This extension paints all of them — and only inside `.bd` files. Your other files stay untouched, regardless of what theme you use.
+Braindump is a small set of line-leading symbols (`#`, `+`, `-`, `?`, `!`, `>`, `<`, `//`) that turn a plain text file into a structured note, without ever leaving plain text.
 
-## Syntax preview
+There's no preview mode. No compile step. What you type is what you read.
 
-![Braindump syntax rendered in a dark theme](images/syntax.png)
+Open a `.bd` file. Start typing. Your notes get color-coded as you go.
+
+## Why another note format?
+
+Markdown was designed for documents you publish. Braindump is designed for notes you _keep_: the running thoughts, todo lists, meeting scribbles, half-formed ideas, and project plans you write for yourself.
+
+That distinction matters because of one design choice: **Braindump has no source/preview split**. In Markdown, you write `## Heading` and flip to a preview to see it styled. In Braindump, the `##` stays visible and gets colored. There's no edit-mode, no read-mode, no toggle. You write your notes once and read them in the same view.
+
+That single rule, "what you type is what you see," shapes everything. The syntax is short enough to remember. The symbols are unambiguous. Your eye finds structure instantly because the markers are right there in the text.
+
+## What Braindump isn't
+
+Braindump isn't a Markdown replacement, a wiki, or a personal-knowledge-management system. It doesn't link between files, doesn't render to HTML, doesn't have plugins. It's syntax highlighting for plain text notes. That's the whole pitch.
+
+## The syntax
+
+Every Braindump file is built from a handful of line-leading markers and a few inline tokens. That's the whole language.
+
+![Braindump syntax rendered in a dark theme](https://raw.githubusercontent.com/sweetlemonai/braindump-vscode/main/images/syntax.png)
+
+### Structure
+
+```braindump
+# Top-level heading
+## Subheading
+### Sub-subheading
+
+= Category
+== Subcategory
+=== Sub-subcategory
+
++ Section
+++ Subsection
++++ Sub-subsection
+```
+
+Three structural registers, each with three depth levels. `#` for the document outline. `=` for grouping. `+` for naming things you're about to elaborate. Most notes use one or two; few use all three.
+
+### Lists
+
+```braindump
+- bullet item
+- another bullet
+
+1. ordered item
+2. second item
+3. third
+
+a. lettered item
+b. second
+```
+
+Bullets are marker-colored (the body stays default text). Numbered and lettered lists are whole-line colored.
+
+### Annotations
+
+```braindump
+? open question
+! important
+* starred
+@alice mentioned
+// a comment to yourself
+```
+
+Quick markers for the moments you reach for them. `?` for things you don't know yet. `!` for things you can't forget. `*` for things you want to come back to. `@name` for people. `//` for asides.
+
+### References
+
+```braindump
+> things going forward, commands, sends, next steps
+< things coming back, references, sources, prior context
+```
+
+Two arrows for two directions. Use `>` when the line is something you're sending out (a command to run, a message to send, a follow-up to do). Use `<` when the line points back to where something came from (a source, a callback, prior context).
+
+### Tasks
+
+```braindump
+[ ] open task
+[x] completed task
+```
+
+Click the checkbox to toggle, or use `Cmd+Shift+Enter` (Mac) / `Ctrl+Shift+Enter` (Windows/Linux) on the line. Completed tasks get struck through automatically.
+
+### Inline tokens
+
+```braindump
+key: value pairs work mid-document
+"double-quoted strings" stand out
+https://example.com URLs are clickable
+--flag CLI flags get their own color
+```
+
+These work anywhere: beginning, middle, or end of any line. Email addresses (`foo@bar.com`) and URL query strings (`?q=1`) are handled correctly so they don't trigger false matches.
+
+### Bracket-line labels
+
+```braindump
+(parentheses on their own line become a label)
+[brackets on their own line become a label]
+{braces on their own line become a label}
+```
+
+Standalone bracket-lines are colored as labels. Inline parentheticals like "by the way (this aside)" stay plain. Only full-line bracket pairs get treated as labels.
 
 ## Syntax at a glance
 
-| Construct | What it does | Whole-line / Marker only |
-|---|---|---|
-| `# heading` `## …` `### …` | Heading, three depths | Whole line |
-| `= category` `==` `===` | Category, three depths | Whole line |
-| `+ section` `++` `+++` | Section, three depths | Whole line |
-| `? question` `??` `???` | Question (italic), three depths | Whole line |
-| `! alert` | Alert (bold) | Whole line |
-| `// comment` | Line comment (italic) | Whole line |
-| `1.` `a.` `A.` | Numbered / lettered list | Whole line |
-| `> forward` `>>` `>>>` | Forward reference, three depths | Whole line |
-| `< back` `<<` `<<<` | Back reference, three depths | Whole line |
-| `- bullet` `--` `---` | Bullet, three depths | Marker only |
-| `* important` `**` `***` | Priority (bold body, red marker), three depths | Marker red + line bold |
-| `key: value` | Key/value pair | Key colored; value colored in light, default in dark |
-| `(line)` `[line]` `{line}` | Bracket / brace lines | Whole line, distinct char + content colors |
-| `@mention` / `@ mention` | Mention (token) | Token only |
-| `--flag` | CLI flag (token) | Token only |
-| `https://…` | URL (token, underlined) | Token only |
-| `"double"` | String (token) | Token only |
-| ` ``` ` … ` ``` ` | Fenced code block (suspends all tokens inside) | Block |
+| Construct                  | What it does                                  | Coloring                                             |
+| -------------------------- | --------------------------------------------- | ---------------------------------------------------- |
+| `# heading` `## …` `### …` | Heading, three depths                         | Whole line                                           |
+| `= category` `==` `===`    | Category, three depths                        | Whole line                                           |
+| `+ section` `++` `+++`     | Section, three depths                         | Whole line                                           |
+| `? question` `??` `???`    | Question (italic), three depths               | Whole line                                           |
+| `! alert`                  | Alert (bold)                                  | Whole line                                           |
+| `// comment`               | Line comment (italic)                         | Whole line                                           |
+| `1.` `a.` `A.`             | Numbered / lettered list                      | Whole line                                           |
+| `> forward` `>>` `>>>`     | Forward reference, three depths               | Whole line                                           |
+| `< back` `<<` `<<<`        | Back reference, three depths                  | Whole line                                           |
+| `- bullet` `--` `---`      | Bullet, three depths                          | Marker only                                          |
+| `* important` `**` `***`   | Priority, three depths                        | Red marker, bold body text                           |
+| `[ ]` `[x]`                | Open / completed task                         | Bracket colored, body strikethrough when done        |
+| `key: value`               | Key/value pair                                | Key colored; value colored in light, default in dark |
+| `(line)` `[line]` `{line}` | Bracket / brace lines                         | Whole line, distinct char and content colors         |
+| `@mention` / `@ mention`   | Mention                                       | Token only                                           |
+| `--flag`                   | CLI flag                                      | Token only                                           |
+| `https://…`                | URL, underlined                               | Token only                                           |
+| `"double"`                 | String                                        | Token only                                           |
+| ` ``` ` … ` ``` `          | Fenced code block, suspends all tokens inside | Block                                                |
 
-Full positive / negative / edge-case coverage lives in `sample.bd`.
+Full positive, negative, and edge-case coverage lives in `sample.bd`.
+
+## What you get
+
+**Outline panel.** Press `Cmd+Shift+O` (Mac) / `Ctrl+Shift+O` (Windows/Linux) to jump to any heading, category, section, question, or starred item in the current file.
+
+**Status bar info.** A compact counter at the bottom shows word count, open question count, and task progress for the current file: `1234w  ?3  √4/12`.
+
+**Mention completion.** Type `@` and pick from the names you've already mentioned in this file, sorted by how often you use them.
+
+**Folding.** Collapse any heading-family section by clicking the gutter triangle. Headings, categories, and sections all fold independently.
+
+**Indent-aware coloring.** Long bullet and list runs modulate their text color slightly with each indent level, so deeply nested children read as quieter than their parents. Structure becomes visible at a glance.
+
+**Snippets.** Type these and press `Tab`:
+
+| Type           | You get            |
+| -------------- | ------------------ |
+| `today`        | Today's date       |
+| `h1` `h2` `h3` | Heading markers    |
+| `q`            | `?` for a question |
+| `imp`          | `!` for important  |
+| `kv`           | `key: value` pair  |
 
 ## How the colors work
 
-Colors are contributed via `configurationDefaults.editor.tokenColorCustomizations` in `package.json`. Every grammar scope ends in `.braindump` so the rules only fire inside `.bd` files — nothing else in your editor is affected.
+Colors are contributed via `configurationDefaults.editor.tokenColorCustomizations` in `package.json`. Every grammar scope ends in `.braindump` so the rules only fire inside `.bd` files. Nothing else in your editor is affected.
 
-The dark palette is the default. The light palette is contributed via the `[*Light*]` theme-name glob, which matches "Default Light+", "GitHub Light", "Solarized Light", "Quiet Light", etc. Themes that are visually light but don't include `Light` in their name will receive the dark palette — workaround is a personal `settings.json` override.
+The dark palette is the default. The light palette is contributed via the `[*Light*]` theme-name glob, which matches "Default Light+", "GitHub Light", "Solarized Light", "Quiet Light", and similar. Themes that are visually light but don't include `Light` in their name will receive the dark palette by default; see Troubleshooting below for the workaround.
 
-### Light vs dark asymmetry (intentional)
+## Troubleshooting
 
-The dark palette colors only the **key** in `key: value` (value falls through to default text). The light palette colors **both** key (`#155E75`) and value (`#0891B2`). This is by design.
+**My notes aren't colored.** Check the bottom-right of the status bar. If it says "Plain Text," click it and pick "Braindump" from the list. Saving with a `.bd` extension should make this automatic next time.
 
-## Install
+**The wrong palette is loading.** Braindump auto-detects light/dark based on the active theme name. If your theme is light but doesn't include "Light" in its name, add this to your User Settings (JSON):
 
-### From the Marketplace
-
-```bash
-code --install-extension sweet-lemon.braindump-language
+```json
+"editor.tokenColorCustomizations": {
+  "[Your Theme Name]": {
+    // copy the [*Light*] block from this extension's package.json here
+  }
+}
 ```
 
-### From a local `.vsix`
+**`Cmd+Shift+Enter` doesn't toggle tasks.** Another extension may have claimed the keybinding. Open Keyboard Shortcuts (`Cmd+K Cmd+S`), search for `cmd+shift+enter`, and look for the conflict. As a fallback, you can also click the `[ ]` or `[x]` directly to toggle.
 
-```bash
-npx -y @vscode/vsce package
-code --install-extension braindump-language-1.2.0.vsix
-```
+**The outline is empty.** The file isn't being recognized as Braindump. Same fix as the first item: pick "Braindump" from the language picker in the status bar.
 
-To uninstall:
+## Issues and feedback
 
-```bash
-code --uninstall-extension sweet-lemon.braindump-language
-```
+Bugs and feature requests: [github.com/sweetlemonai/braindump-vscode](https://github.com/sweetlemonai/braindump-vscode).
 
-## Develop locally
-
-Open the project in VS Code, then launch a clean dev-host window with the extension loaded:
-
-```bash
-code --extensionDevelopmentPath="$PWD" sample.bd
-```
-
-The dev host runs in isolation; closing the window unloads the extension. Use **Developer: Reload Window** (`Cmd+R`) after editing the grammar JSON or `package.json` to pick up changes.
-
-To inspect grammar scope assignment, run **Developer: Inspect Editor Tokens and Scopes** in the dev host and click any character in `sample.bd` — the panel shows the full scope stack.
-
-## Build
-
-```bash
-npx -y @vscode/vsce package
-```
-
-Produces `braindump-language-1.2.0.vsix` in the project root. No `npm install`, no compile step — the extension contributes only declarative JSON.
+Release notes: [CHANGELOG.md](CHANGELOG.md).
 
 ## Contributing
 
