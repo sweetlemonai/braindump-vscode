@@ -484,6 +484,7 @@ Last lines, no trailing newline issues:
 [a]                       ← bracket-line (single char other than x/X), NOT task
 [xy]                      ← bracket-line (more than one char), NOT task
 
+@jaghool
 
 - alpha
 - bravo

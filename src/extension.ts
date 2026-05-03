@@ -9,6 +9,7 @@ import {
   registerBracketHoverCursor,
   toggleTask,
 } from './features/tasks';
+import { registerBulletZebra } from './features/zebra';
 
 const SELECTOR: vscode.DocumentSelector = { scheme: 'file', language: 'braindump' };
 
@@ -24,6 +25,7 @@ export function activate(context: vscode.ExtensionContext): void {
   );
   registerBracketHoverCursor(context);
   registerStatusBar(context);
+  registerBulletZebra(context);
 }
 
 export function deactivate(): void {}
