@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { registerMentionCompletion } from './features/mentionComplete';
 import { BraindumpOutlineProvider } from './features/outline';
 import { registerStatusBar } from './features/statusBar';
 import {
@@ -18,7 +19,8 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.languages.registerDocumentSymbolProvider(SELECTOR, new BraindumpOutlineProvider()),
     vscode.languages.registerDocumentLinkProvider(SELECTOR, new BraindumpTaskBodyLinkProvider()),
     vscode.commands.registerCommand(TOGGLE_COMMAND, toggleTask),
-    registerBracketClickToggle()
+    registerBracketClickToggle(),
+    registerMentionCompletion()
   );
   registerBracketHoverCursor(context);
   registerStatusBar(context);
