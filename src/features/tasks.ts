@@ -50,7 +50,10 @@ export class BraindumpTaskBodyLinkProvider implements vscode.DocumentLinkProvide
       const match = TASK_RE.exec(text);
       if (!match) continue;
 
-      const bodyStart = match[1].length + 3; // after "[c]"
+      let bodyStart = match[1].length + 3; // after "[c]"
+      while (bodyStart < text.length && /\s/.test(text[bodyStart])) {
+        bodyStart++;
+      }
       if (bodyStart >= text.length) continue; // empty body, nothing to link
 
       const range = new vscode.Range(n, bodyStart, n, text.length);

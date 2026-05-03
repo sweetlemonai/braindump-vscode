@@ -282,7 +282,7 @@
     },
 
     "key-value": {
-      "begin": "^\\s*([\\p{L}_][\\p{L}\\p{N}_-]*)(:)\\s+",
+      "begin": "^\\s*([\\p{L}_][\\p{L}\\p{N}_-]*(?: [\\p{L}_][\\p{L}\\p{N}_-]*)*)(:)\\s+",
       "beginCaptures": {
         "1": { "name": "keyword.field.braindump" },
         "2": { "name": "keyword.field.braindump" }
