@@ -8,13 +8,9 @@
 
 Braindump is a lightweight note syntax built around line-leading markers (`#`, `+`, `-`, `*`, `?`, `!`, `>`, `<`, `//`) and a few inline tokens (`@mention`, `--flag`, URLs, `"strings"`). This extension paints all of them — and only inside `.bd` files. Your other files stay untouched, regardless of what theme you use.
 
-## Screenshots
+## Syntax preview
 
-> Placeholder images. Replace `images/screenshot-dark.png` and `images/screenshot-light.png` with real captures of `sample.bd` once you've installed the extension.
-
-| Dark | Light |
-|---|---|
-| ![Dark theme rendering](images/screenshot-dark.png) | ![Light theme rendering](images/screenshot-light.png) |
+![Braindump syntax rendered in a dark theme](images/syntax.png)
 
 ## Syntax at a glance
 
