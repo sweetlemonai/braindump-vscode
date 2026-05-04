@@ -2,7 +2,7 @@
   "name": "braindump",
   "displayName": "Braindump Notes",
   "description": "Syntax highlighting for the Braindump note-taking syntax (.bd files).",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "publisher": "purple-vision",
   "license": "MIT",
   "engines": {
@@ -349,6 +349,84 @@
             }
           },
           {
+            "scope": "meta.list.bullet.body.braindump",
+            "settings": {
+              "foreground": "#C5C2D6"
+            }
+          },
+          {
+            "scope": "meta.list.numbered.alt.braindump",
+            "settings": {
+              "foreground": "#C4951D"
+            }
+          },
+          {
+            "scope": "meta.list.lettered.alt.braindump",
+            "settings": {
+              "foreground": "#C4951D"
+            }
+          },
+          {
+            "scope": "punctuation.separator.colon.braindump",
+            "settings": {
+              "foreground": "#C5C2D6"
+            }
+          },
+          {
+            "scope": "punctuation.separator.equals.braindump",
+            "settings": {
+              "foreground": "#C5C2D6"
+            }
+          },
+          {
+            "scope": "punctuation.separator.arrow.braindump",
+            "settings": {
+              "foreground": "#C5C2D6"
+            }
+          },
+          {
+            "scope": "punctuation.separator.dash-arrow.braindump",
+            "settings": {
+              "foreground": "#C5C2D6"
+            }
+          },
+          {
+            "scope": "keyword.field.equals.braindump",
+            "settings": {
+              "foreground": "#23C4E0"
+            }
+          },
+          {
+            "scope": "meta.field.value.equals.braindump",
+            "settings": {
+              "foreground": "#A8E0FF"
+            }
+          },
+          {
+            "scope": "keyword.field.arrow.braindump",
+            "settings": {
+              "foreground": "#23C4E0"
+            }
+          },
+          {
+            "scope": "meta.field.value.arrow.braindump",
+            "settings": {
+              "foreground": "#A8E0FF"
+            }
+          },
+          {
+            "scope": "keyword.field.dash-arrow.braindump",
+            "settings": {
+              "foreground": "#23C4E0"
+            }
+          },
+          {
+            "scope": "meta.field.value.dash-arrow.braindump",
+            "settings": {
+              "foreground": "#A8E0FF"
+            }
+          },
+          {
             "scope": "markup.brace.line.braindump",
             "settings": {
               "foreground": "#DD6BA7"
@@ -616,6 +694,84 @@
               "scope": "meta.list.alt.braindump",
               "settings": {
                 "foreground": "#5B5475"
+              }
+            },
+            {
+              "scope": "meta.list.bullet.body.braindump",
+              "settings": {
+                "foreground": "#1A1A1A"
+              }
+            },
+            {
+              "scope": "meta.list.numbered.alt.braindump",
+              "settings": {
+                "foreground": "#915807"
+              }
+            },
+            {
+              "scope": "meta.list.lettered.alt.braindump",
+              "settings": {
+                "foreground": "#915807"
+              }
+            },
+            {
+              "scope": "punctuation.separator.colon.braindump",
+              "settings": {
+                "foreground": "#1A1A1A"
+              }
+            },
+            {
+              "scope": "punctuation.separator.equals.braindump",
+              "settings": {
+                "foreground": "#1A1A1A"
+              }
+            },
+            {
+              "scope": "punctuation.separator.arrow.braindump",
+              "settings": {
+                "foreground": "#1A1A1A"
+              }
+            },
+            {
+              "scope": "punctuation.separator.dash-arrow.braindump",
+              "settings": {
+                "foreground": "#1A1A1A"
+              }
+            },
+            {
+              "scope": "keyword.field.equals.braindump",
+              "settings": {
+                "foreground": "#155E75"
+              }
+            },
+            {
+              "scope": "meta.field.value.equals.braindump",
+              "settings": {
+                "foreground": "#0891B2"
+              }
+            },
+            {
+              "scope": "keyword.field.arrow.braindump",
+              "settings": {
+                "foreground": "#155E75"
+              }
+            },
+            {
+              "scope": "meta.field.value.arrow.braindump",
+              "settings": {
+                "foreground": "#0891B2"
+              }
+            },
+            {
+              "scope": "keyword.field.dash-arrow.braindump",
+              "settings": {
+                "foreground": "#155E75"
+              }
+            },
+            {
+              "scope": "meta.field.value.dash-arrow.braindump",
+              "settings": {
+                "foreground": "#0891B2"
               }
             },
             {

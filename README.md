@@ -24,7 +24,7 @@ Braindump isn't a Markdown replacement, a wiki, or a personal-knowledge-manageme
 
 **Tasks.** Write `[ ]` for an open task, `[x]` for done. Click the checkbox to toggle, or `Cmd+Click` (Mac) / `Ctrl+Click` (Win/Linux) anywhere on the task body. Done and open look the same except for the `x` itself — no strikethrough, no dimming, just clean state.
 
-**Customizable colors.** Open `Cmd+Shift+P` → **"Braindump: Customize colors"** to pick from five bundled presets (Original, Minimal, Sunset, Ocean, Light) or fine-tune individual token colors. Customizations save to your user settings and sync across machines via VS Code Settings Sync.
+**Customizable colors.** Open `Cmd+Shift+P` → **"Braindump: Customize colors"** to pick from five bundled presets (Original, Minimal, Sunset, Ocean, Light) or fine-tune individual token colors. The panel exposes a row for every visible token, including a separate **key**, **value**, and **separator** triple for each of the four key/value forms (`:`, `=`, `=>`, `->`), and primary + alt colors for each list family (bullet, numbered, lettered). Customizations save to your user settings and sync across machines via VS Code Settings Sync. To disable zebra alternation for a list type, set its primary and alt colors to the same value.
 
 **Outline panel.** Press `Cmd+Shift+O` (Mac) / `Ctrl+Shift+O` (Win/Linux) to navigate any braindump file by its structure. Headings, sections, and indented items become a three-level outline you can jump through.
 
@@ -32,7 +32,9 @@ Braindump isn't a Markdown replacement, a wiki, or a personal-knowledge-manageme
 
 **Mention completion.** Type `@` and get a dropdown of every `@name` already used in the file, sorted by frequency. Email addresses and URL fragments don't pollute the list.
 
-**Bullet zebra.** Long uniform `-` bullet lists get alternating-row coloring on the body text so the eye picks up rhythm. Resets at every blank line. Numbered lists, lettered lists, and tasks are excluded.
+**List zebra.** Long uniform runs of `-` bullets, numbered lists (`1.` `2.` …), or lettered lists (`a.` `b.` …) get alternating-row coloring on the body text so the eye picks up rhythm. Each family has its own primary and alt color slots. Resets at every blank line or when the family changes. Tasks are excluded.
+
+**Code blocks with language highlighting.** Fenced blocks (` ``` `) embed real syntax highlighting for ten languages — `typescript`/`ts`, `javascript`/`js`, `python`/`py`, `json`, `bash`/`sh`, `html`, `css`, `sql`, `yaml`, `markdown`. Bare or unknown-language fences render plain. Braindump tokens never bleed in.
 
 **Light & dark palettes.** Auto-detected from your active VS Code theme name. Colors render the same regardless of which theme you have active — your theme stays untouched outside `.bd` files.
 
@@ -75,7 +77,10 @@ Braindump isn't a Markdown replacement, a wiki, or a personal-knowledge-manageme
 | `- bullet` `--` `---`      | Bullet, three depths                          | Marker only                                          |
 | `* important` `**` `***`   | Priority, three depths                        | Red marker, bold body text                           |
 | `[ ]` `[x]`                | Open / completed task                         | Bracket trio colored, body always default text       |
-| `key: value`               | Key/value pair                                | Key colored; value colored in light, default in dark |
+| `key: value`               | Key/value pair (colon)                        | Key, separator, and value each colorable             |
+| `key = value`              | Key/value pair (equals)                       | Same as above, distinct separator scope              |
+| `key => value`             | Key/value pair (fat arrow)                    | Same as above, distinct separator scope              |
+| `key -> value`             | Key/value pair (thin arrow)                   | Same as above, distinct separator scope              |
 | `(line)` `[line]` `{line}` | Bracket / brace lines                         | Whole line, distinct char and content colors         |
 | `@mention`                 | Mention                                       | Token only                                           |
 | `--flag`                   | CLI flag                                      | Token only                                           |

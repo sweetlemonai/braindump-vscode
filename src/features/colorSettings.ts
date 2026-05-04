@@ -12,16 +12,31 @@ import {
 
 export const OPEN_COLOR_SETTINGS_COMMAND = 'braindump.openColorSettings';
 
-// Scopes added in 1.5.0 that older saved customizations are missing. If we
-// see a non-empty user textMateRules but none of these scopes, we rewrite the
-// rules with the user's existing colors plus the full set of bundled scopes
-// so previously-uneditable colors (task brackets, list-alt, paren/bracket
-// punctuation) come back without the user having to click Reset.
-const REQUIRED_SCOPES_1_5 = [
+// Scopes added across 1.5.0 / 1.6.0 that older saved customizations are
+// missing. If we see a non-empty user textMateRules but any of these scopes
+// is absent, we rewrite the rules with the user's existing colors plus the
+// full set of bundled scopes so previously-uneditable colors come back
+// without the user having to click Reset.
+const REQUIRED_SCOPES = [
+  // 1.5.0
   'markup.task.bracket.braindump',
   'meta.list.alt.braindump',
   'punctuation.paren.line.braindump',
   'punctuation.bracket.line.braindump',
+  // 1.6.0
+  'meta.list.bullet.body.braindump',
+  'meta.list.numbered.alt.braindump',
+  'meta.list.lettered.alt.braindump',
+  'punctuation.separator.colon.braindump',
+  'punctuation.separator.equals.braindump',
+  'punctuation.separator.arrow.braindump',
+  'punctuation.separator.dash-arrow.braindump',
+  'keyword.field.equals.braindump',
+  'keyword.field.arrow.braindump',
+  'keyword.field.dash-arrow.braindump',
+  'meta.field.value.equals.braindump',
+  'meta.field.value.arrow.braindump',
+  'meta.field.value.dash-arrow.braindump',
 ];
 
 export async function migrateLegacyRules(packageJSON: unknown): Promise<void> {
@@ -33,7 +48,7 @@ export async function migrateLegacyRules(packageJSON: unknown): Promise<void> {
   if (!rules || rules.length === 0) return;
 
   const scopes = new Set(rules.map((r) => r.scope).filter(Boolean));
-  const missingRequired = !REQUIRED_SCOPES_1_5.every((s) => scopes.has(s));
+  const missingRequired = !REQUIRED_SCOPES.every((s) => scopes.has(s));
 
   // Detect a stale paren/bracket mirror: the swap convention is
   // paren-punct == bracket-content, paren-content == bracket-punct. If a

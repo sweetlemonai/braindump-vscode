@@ -499,3 +499,108 @@ Last lines, no trailing newline issues:
 
 - india
 - juliet
+
+
+# ============================================================
+# 1.6.0: Fenced code blocks with language highlighting
+# ============================================================
+
+```typescript
+function add(a: number, b: number): number {
+  return a + b;
+}
+```
+
+```js
+const greet = (name) => `hello, ${name}`;
+console.log(greet("world"));
+```
+
+```python
+def fib(n):
+    return n if n < 2 else fib(n-1) + fib(n-2)
+```
+
+```json
+{ "name": "braindump", "version": "1.6.0" }
+```
+
+```bash
+for f in *.bd; do echo "found: $f"; done
+```
+
+```html
+<section class="hero"><h1>Braindump</h1></section>
+```
+
+```css
+.hero { background: linear-gradient(#222, #444); }
+```
+
+```sql
+SELECT id, name FROM users WHERE active = true;
+```
+
+```yaml
+name: braindump
+version: 1.6.0
+features:
+  - folding
+  - zebra
+```
+
+```markdown
+# heading
+- bullet
+[link](https://example.com)
+```
+
+```
+# this fenced block has no language — renders plain.
+- braindump tokens never bleed in here.
+@ no mention either.
+```
+
+
+# ============================================================
+# 1.6.0: Keys with digits, embedded spaces
+# ============================================================
+
+Option 1: first option value
+Option A: alpha option value
+first deliverable: ready
+step 3: in progress
+phase 2 final: shipped
+
+
+# ============================================================
+# 1.6.0: All four key/value separators
+# ============================================================
+
+name: braindump
+name = braindump
+input => output
+input -> output
+
+= Category at line start (still category, not key=value)
+== Sub-category
+=== Deep category
+
+
+# ============================================================
+# 1.6.0: Numbered + lettered list zebra
+# ============================================================
+
+1. first numbered (primary)
+2. second numbered (alt)
+3. third numbered (primary)
+4. fourth numbered (alt)
+5. fifth — with @mention and "string" inline
+6. sixth — https://example.com keeps url color on alt
+
+a. alpha lettered (primary)
+b. beta lettered (alt)
+c. gamma lettered (primary)
+d. delta lettered (alt) — "string" stays string color
+e. epsilon — --flag stays flag color
+f. zeta

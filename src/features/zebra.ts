@@ -1,65 +1,103 @@
 import * as vscode from 'vscode';
 
-// Matches any depth of dash bullet (-, --, ---) at line start. The marker must
-// be followed by whitespace or end-of-line so things like --flag don't match.
+// Each family matches at line start; marker must end with whitespace or EOL.
 const BULLET_RE = /^(\s*)(-{1,3})(?=\s|$)/;
+const NUMBERED_RE = /^(\s*)(\d+\.)(?=\s)/;
+const LETTERED_RE = /^(\s*)([A-Za-z]\.)(?=\s)/;
 
 // Inline token regexes — kept in sync with the grammar's inline-overlays.
-// We use these to find ranges that already have their own color so the zebra
-// decoration can skip over them (a TextEditorDecoration foreground would
-// otherwise clobber the grammar-applied color).
+// A foreground decoration would otherwise paint over the grammar-applied color
+// for these tokens, so we carve them out of the decorated ranges.
 const INLINE_PATTERNS: RegExp[] = [
   /"[^"]*"/g,
   /(?<![\w/])https?:\/\/[^\s)\]]+/g,
   /(?<!\S)--[A-Za-z][\w-]*(?:=\S+)?/g,
-  // @ word-form mention
   /(?<!\S)@[\p{L}\p{N}][\p{L}\p{N}_-]*/gu,
-  // @ space-form mention: @, whitespace, content up to // or EOL
   /(?<!\S)@\s+\S[^\n]*?(?=\s+\/\/(?!\/)|\s*$)/g,
-  // // comment that follows whitespace mid-line (only relevant inside the
-  // @-space mention edge case, but harmless elsewhere — bullet bodies
-  // rarely contain '//' otherwise).
   /(?<=\s)\/\/(?!\/).*$/g,
 ];
 
-const META_LIST_ALT_SCOPE = 'meta.list.alt.braindump';
-const DEFAULT_ALT_COLOR = '#A693C0';
+type Family = 'bullet' | 'numbered' | 'lettered';
 
-let evenRowDecoration: vscode.TextEditorDecorationType | undefined;
-let currentColor = DEFAULT_ALT_COLOR;
+interface FamilySpec {
+  re: RegExp;
+  primaryScope: string;
+  altScope: string;
+  primaryDefault: string;
+  altDefault: string;
+}
 
-function readListAltColor(): string {
+const FAMILIES: Record<Family, FamilySpec> = {
+  bullet: {
+    re: BULLET_RE,
+    primaryScope: 'meta.list.bullet.body.braindump',
+    altScope: 'meta.list.alt.braindump',
+    primaryDefault: '#C5C2D6',
+    altDefault: '#A693C0',
+  },
+  numbered: {
+    re: NUMBERED_RE,
+    primaryScope: 'markup.list.numbered.braindump',
+    altScope: 'meta.list.numbered.alt.braindump',
+    primaryDefault: '#DAA520',
+    altDefault: '#C4951D',
+  },
+  lettered: {
+    re: LETTERED_RE,
+    primaryScope: 'markup.list.lettered.braindump',
+    altScope: 'meta.list.lettered.alt.braindump',
+    primaryDefault: '#DAA520',
+    altDefault: '#C4951D',
+  },
+};
+
+interface FamilyState {
+  primary: vscode.TextEditorDecorationType | undefined;
+  alt: vscode.TextEditorDecorationType | undefined;
+  primaryColor: string;
+  altColor: string;
+}
+
+const state: Record<Family, FamilyState> = {
+  bullet: { primary: undefined, alt: undefined, primaryColor: '', altColor: '' },
+  numbered: { primary: undefined, alt: undefined, primaryColor: '', altColor: '' },
+  lettered: { primary: undefined, alt: undefined, primaryColor: '', altColor: '' },
+};
+
+function readScopeColor(scope: string, fallback: string): string {
   const config = vscode.workspace.getConfiguration('editor', { languageId: 'braindump' });
   const tcc = config.get<{ textMateRules?: { scope?: string; settings?: { foreground?: string } }[] }>(
     'tokenColorCustomizations'
   );
   const rules = tcc?.textMateRules ?? [];
   for (const rule of rules) {
-    if (rule.scope === META_LIST_ALT_SCOPE && rule.settings?.foreground) {
+    if (rule.scope === scope && rule.settings?.foreground) {
       return rule.settings.foreground;
     }
   }
-  return DEFAULT_ALT_COLOR;
+  return fallback;
 }
 
-function ensureDecoration(): vscode.TextEditorDecorationType {
-  if (!evenRowDecoration) {
-    evenRowDecoration = vscode.window.createTextEditorDecorationType({
-      color: currentColor,
-    });
+function ensureDecorations(family: Family): { primary: vscode.TextEditorDecorationType; alt: vscode.TextEditorDecorationType } {
+  const s = state[family];
+  const spec = FAMILIES[family];
+  const primaryColor = readScopeColor(spec.primaryScope, spec.primaryDefault);
+  const altColor = readScopeColor(spec.altScope, spec.altDefault);
+
+  if (!s.primary || s.primaryColor !== primaryColor) {
+    s.primary?.dispose();
+    s.primary = vscode.window.createTextEditorDecorationType({ color: primaryColor });
+    s.primaryColor = primaryColor;
   }
-  return evenRowDecoration;
-}
-
-function recreateDecoration(): void {
-  if (evenRowDecoration) {
-    evenRowDecoration.dispose();
-    evenRowDecoration = undefined;
+  if (!s.alt || s.altColor !== altColor) {
+    s.alt?.dispose();
+    s.alt = vscode.window.createTextEditorDecorationType({ color: altColor });
+    s.altColor = altColor;
   }
-  ensureDecoration();
+  return { primary: s.primary, alt: s.alt };
 }
 
-// Find ranges of inline tokens in `text`, sorted and merged.
+// Find inline-token ranges in `text`, sorted and merged.
 function inlineTokenRanges(text: string): [number, number][] {
   const out: [number, number][] = [];
   for (const re of INLINE_PATTERNS) {
@@ -85,58 +123,103 @@ function inlineTokenRanges(text: string): [number, number][] {
   return merged;
 }
 
+// Carve a single-line range [bodyStart, text.length) into segments that skip
+// inline-token ranges, so grammar colors win for those tokens.
+function carveBodyRanges(line: number, text: string, bodyStart: number): vscode.Range[] {
+  const out: vscode.Range[] = [];
+  if (bodyStart >= text.length) return out;
+  const skips = inlineTokenRanges(text);
+  let cursor = bodyStart;
+  for (const [s, e] of skips) {
+    if (e <= bodyStart) continue;
+    const segStart = Math.max(s, bodyStart);
+    if (segStart > cursor) {
+      out.push(new vscode.Range(line, cursor, line, segStart));
+    }
+    cursor = Math.max(cursor, e);
+    if (cursor >= text.length) break;
+  }
+  if (cursor < text.length) {
+    out.push(new vscode.Range(line, cursor, line, text.length));
+  }
+  return out;
+}
+
+interface FamilyRanges {
+  primary: vscode.Range[];
+  alt: vscode.Range[];
+}
+
 function refresh(editor: vscode.TextEditor | undefined): void {
   if (!editor) return;
-  const decoration = ensureDecoration();
+  const decorations: Record<Family, { primary: vscode.TextEditorDecorationType; alt: vscode.TextEditorDecorationType }> = {
+    bullet: ensureDecorations('bullet'),
+    numbered: ensureDecorations('numbered'),
+    lettered: ensureDecorations('lettered'),
+  };
+
   if (editor.document.languageId !== 'braindump') {
-    editor.setDecorations(decoration, []);
+    for (const f of ['bullet', 'numbered', 'lettered'] as Family[]) {
+      editor.setDecorations(decorations[f].primary, []);
+      editor.setDecorations(decorations[f].alt, []);
+    }
     return;
   }
 
-  const ranges: vscode.Range[] = [];
-  let countInRun = 0;
+  const ranges: Record<Family, FamilyRanges> = {
+    bullet: { primary: [], alt: [] },
+    numbered: { primary: [], alt: [] },
+    lettered: { primary: [], alt: [] },
+  };
+  const counters: Record<Family, number> = { bullet: 0, numbered: 0, lettered: 0 };
 
   for (let n = 0; n < editor.document.lineCount; n++) {
     const text = editor.document.lineAt(n).text;
-    const match = BULLET_RE.exec(text);
+    let matchedFamily: Family | null = null;
+    let markerEnd = 0;
 
-    if (!match) {
-      countInRun = 0;
+    for (const f of ['bullet', 'numbered', 'lettered'] as Family[]) {
+      const m = FAMILIES[f].re.exec(text);
+      if (m) {
+        matchedFamily = f;
+        markerEnd = m[0].length;
+        break;
+      }
+    }
+
+    if (!matchedFamily) {
+      counters.bullet = 0;
+      counters.numbered = 0;
+      counters.lettered = 0;
       continue;
     }
 
-    countInRun++;
-    if (countInRun % 2 !== 0) continue;
-
-    let bodyStart = match[0].length;
-    while (bodyStart < text.length && /\s/.test(text[bodyStart])) {
-      bodyStart++;
+    // Reset other families' runs.
+    for (const f of ['bullet', 'numbered', 'lettered'] as Family[]) {
+      if (f !== matchedFamily) counters[f] = 0;
     }
+
+    counters[matchedFamily]++;
+    const isAlt = counters[matchedFamily] % 2 === 0;
+
+    let bodyStart = markerEnd;
+    while (bodyStart < text.length && /\s/.test(text[bodyStart])) bodyStart++;
     if (bodyStart >= text.length) continue;
 
-    // Carve out inline-token ranges so their own grammar color survives.
-    const skips = inlineTokenRanges(text);
-    let cursor = bodyStart;
-    for (const [s, e] of skips) {
-      if (e <= bodyStart) continue;
-      const segStart = Math.max(s, bodyStart);
-      if (segStart > cursor) {
-        ranges.push(new vscode.Range(n, cursor, n, segStart));
-      }
-      cursor = Math.max(cursor, e);
-      if (cursor >= text.length) break;
-    }
-    if (cursor < text.length) {
-      ranges.push(new vscode.Range(n, cursor, n, text.length));
-    }
+    const segs = carveBodyRanges(n, text, bodyStart);
+    (isAlt ? ranges[matchedFamily].alt : ranges[matchedFamily].primary).push(...segs);
   }
 
-  editor.setDecorations(decoration, ranges);
+  for (const f of ['bullet', 'numbered', 'lettered'] as Family[]) {
+    editor.setDecorations(decorations[f].primary, ranges[f].primary);
+    editor.setDecorations(decorations[f].alt, ranges[f].alt);
+  }
 }
 
 export function registerBulletZebra(context: vscode.ExtensionContext): void {
-  currentColor = readListAltColor();
-  ensureDecoration();
+  ensureDecorations('bullet');
+  ensureDecorations('numbered');
+  ensureDecorations('lettered');
   refresh(vscode.window.activeTextEditor);
 
   context.subscriptions.push(
@@ -149,16 +232,19 @@ export function registerBulletZebra(context: vscode.ExtensionContext): void {
     }),
     vscode.workspace.onDidChangeConfiguration((event) => {
       if (!event.affectsConfiguration('editor.tokenColorCustomizations')) return;
-      const next = readListAltColor();
-      if (next === currentColor) return;
-      currentColor = next;
-      recreateDecoration();
+      ensureDecorations('bullet');
+      ensureDecorations('numbered');
+      ensureDecorations('lettered');
       vscode.window.visibleTextEditors.forEach((ed) => refresh(ed));
     }),
     {
       dispose: () => {
-        evenRowDecoration?.dispose();
-        evenRowDecoration = undefined;
+        for (const f of ['bullet', 'numbered', 'lettered'] as Family[]) {
+          state[f].primary?.dispose();
+          state[f].alt?.dispose();
+          state[f].primary = undefined;
+          state[f].alt = undefined;
+        }
       },
     }
   );

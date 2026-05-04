@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.6.0 — 2026-05-04
+
+- **Fenced code block language highlighting.** Fenced blocks now embed the host grammar for ten languages: `typescript`/`ts`, `javascript`/`js`, `python`/`py`, `json`, `bash`/`sh`/`shell`/`zsh`, `html`, `css`, `sql`, `yaml`/`yml`, `markdown`/`md`. Unknown or bare ``` blocks render plain. Braindump tokens never bleed in.
+- **Four key/value separators.** Added `=`, `=>`, `->` alongside the existing `:`. Each form gets its own key, value, and separator scopes so all three can be re-colored independently per separator. Text is preserved verbatim — no Unicode auto-conversion.
+- **Keys can contain digits.** Embedded-space keys like `Option 1`, `step 3 final`, `first deliverable` now color correctly. First char must still be a letter; subsequent word groups can start with letter or digit.
+- **Numbered and lettered list zebra.** Each family has its own primary and alt colors, both editable. Reset rules match the bullet zebra (blank line, switch of family).
+- **More panel rows.** Added Value, Bullet primary, Numbered alt, Lettered alt, and a row per separator (`:`/`=`/`=>`/`->`).
+- Migration extended to 1.6.0 scopes — existing customizations get the new colors filled in on first activation.
+
 ## 1.5.0 — 2026-05-03
 
 - **Heading folding.** `#` / `##` / `###` heading lines and depth-1 `=` lines now collapse to a folding range, scoped by depth (a `##` folds until the next `##` or `#`; a `=` folds until the next `=` or any `#`).

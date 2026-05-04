@@ -36,6 +36,162 @@
     },
 
     "code-block": {
+      "patterns": [
+        { "include": "#code-block-typescript" },
+        { "include": "#code-block-javascript" },
+        { "include": "#code-block-python" },
+        { "include": "#code-block-json" },
+        { "include": "#code-block-bash" },
+        { "include": "#code-block-html" },
+        { "include": "#code-block-css" },
+        { "include": "#code-block-sql" },
+        { "include": "#code-block-yaml" },
+        { "include": "#code-block-markdown" },
+        { "include": "#code-block-plain" }
+      ]
+    },
+
+    "code-block-typescript": {
+      "begin": "^(```)(typescript|ts)\\s*$",
+      "end": "^(```)\\s*$",
+      "name": "markup.raw.block.braindump",
+      "patterns": [
+        {
+          "begin": "(^|\\G)",
+          "while": "(^|\\G)(?!\\s*```\\s*$)",
+          "contentName": "meta.embedded.block.typescript",
+          "patterns": [{ "include": "source.ts" }]
+        }
+      ]
+    },
+
+    "code-block-javascript": {
+      "begin": "^(```)(javascript|js)\\s*$",
+      "end": "^(```)\\s*$",
+      "name": "markup.raw.block.braindump",
+      "patterns": [
+        {
+          "begin": "(^|\\G)",
+          "while": "(^|\\G)(?!\\s*```\\s*$)",
+          "contentName": "meta.embedded.block.javascript",
+          "patterns": [{ "include": "source.js" }]
+        }
+      ]
+    },
+
+    "code-block-python": {
+      "begin": "^(```)(python|py)\\s*$",
+      "end": "^(```)\\s*$",
+      "name": "markup.raw.block.braindump",
+      "patterns": [
+        {
+          "begin": "(^|\\G)",
+          "while": "(^|\\G)(?!\\s*```\\s*$)",
+          "contentName": "meta.embedded.block.python",
+          "patterns": [{ "include": "source.python" }]
+        }
+      ]
+    },
+
+    "code-block-json": {
+      "begin": "^(```)(json)\\s*$",
+      "end": "^(```)\\s*$",
+      "name": "markup.raw.block.braindump",
+      "patterns": [
+        {
+          "begin": "(^|\\G)",
+          "while": "(^|\\G)(?!\\s*```\\s*$)",
+          "contentName": "meta.embedded.block.json",
+          "patterns": [{ "include": "source.json" }]
+        }
+      ]
+    },
+
+    "code-block-bash": {
+      "begin": "^(```)(bash|sh|shell|zsh)\\s*$",
+      "end": "^(```)\\s*$",
+      "name": "markup.raw.block.braindump",
+      "patterns": [
+        {
+          "begin": "(^|\\G)",
+          "while": "(^|\\G)(?!\\s*```\\s*$)",
+          "contentName": "meta.embedded.block.shell",
+          "patterns": [{ "include": "source.shell" }]
+        }
+      ]
+    },
+
+    "code-block-html": {
+      "begin": "^(```)(html)\\s*$",
+      "end": "^(```)\\s*$",
+      "name": "markup.raw.block.braindump",
+      "patterns": [
+        {
+          "begin": "(^|\\G)",
+          "while": "(^|\\G)(?!\\s*```\\s*$)",
+          "contentName": "meta.embedded.block.html",
+          "patterns": [{ "include": "text.html.basic" }]
+        }
+      ]
+    },
+
+    "code-block-css": {
+      "begin": "^(```)(css)\\s*$",
+      "end": "^(```)\\s*$",
+      "name": "markup.raw.block.braindump",
+      "patterns": [
+        {
+          "begin": "(^|\\G)",
+          "while": "(^|\\G)(?!\\s*```\\s*$)",
+          "contentName": "meta.embedded.block.css",
+          "patterns": [{ "include": "source.css" }]
+        }
+      ]
+    },
+
+    "code-block-sql": {
+      "begin": "^(```)(sql)\\s*$",
+      "end": "^(```)\\s*$",
+      "name": "markup.raw.block.braindump",
+      "patterns": [
+        {
+          "begin": "(^|\\G)",
+          "while": "(^|\\G)(?!\\s*```\\s*$)",
+          "contentName": "meta.embedded.block.sql",
+          "patterns": [{ "include": "source.sql" }]
+        }
+      ]
+    },
+
+    "code-block-yaml": {
+      "begin": "^(```)(yaml|yml)\\s*$",
+      "end": "^(```)\\s*$",
+      "name": "markup.raw.block.braindump",
+      "patterns": [
+        {
+          "begin": "(^|\\G)",
+          "while": "(^|\\G)(?!\\s*```\\s*$)",
+          "contentName": "meta.embedded.block.yaml",
+          "patterns": [{ "include": "source.yaml" }]
+        }
+      ]
+    },
+
+    "code-block-markdown": {
+      "begin": "^(```)(markdown|md)\\s*$",
+      "end": "^(```)\\s*$",
+      "name": "markup.raw.block.braindump",
+      "patterns": [
+        {
+          "begin": "(^|\\G)",
+          "while": "(^|\\G)(?!\\s*```\\s*$)",
+          "contentName": "meta.embedded.block.markdown",
+          "patterns": [{ "include": "text.html.markdown" }]
+        }
+      ]
+    },
+
+    "code-block-plain": {
       "begin": "^```[\\w-]*\\s*$",
       "end": "^```\\s*$",
       "name": "markup.raw.block.braindump"
@@ -283,13 +439,55 @@
     },
 
     "key-value": {
-      "begin": "^\\s*([\\p{L}_][\\p{L}\\p{N}_-]*(?: [\\p{L}_][\\p{L}\\p{N}_-]*)*)(:)\\s+",
+      "patterns": [
+        { "include": "#kv-arrow-fat" },
+        { "include": "#kv-arrow-thin" },
+        { "include": "#kv-equals" },
+        { "include": "#kv-colon" }
+      ]
+    },
+
+    "kv-colon": {
+      "begin": "^\\s*([\\p{L}][\\p{L}\\p{N}_-]*(?: [\\p{L}\\p{N}_-]+)*)\\s*(:)\\s+",
       "beginCaptures": {
         "1": { "name": "keyword.field.braindump" },
-        "2": { "name": "keyword.field.braindump" }
+        "2": { "name": "punctuation.separator.colon.braindump" }
       },
       "end": "$",
       "contentName": "meta.field.value.braindump",
+      "patterns": [{ "include": "#inline-overlays" }]
+    },
+
+    "kv-equals": {
+      "begin": "^\\s*([\\p{L}][\\p{L}\\p{N}_-]*(?: [\\p{L}\\p{N}_-]+)*)\\s+(=)\\s+",
+      "beginCaptures": {
+        "1": { "name": "keyword.field.equals.braindump" },
+        "2": { "name": "punctuation.separator.equals.braindump" }
+      },
+      "end": "$",
+      "contentName": "meta.field.value.equals.braindump",
+      "patterns": [{ "include": "#inline-overlays" }]
+    },
+
+    "kv-arrow-fat": {
+      "begin": "^\\s*([\\p{L}][\\p{L}\\p{N}_-]*(?: [\\p{L}\\p{N}_-]+)*)\\s+(=>)\\s+",
+      "beginCaptures": {
+        "1": { "name": "keyword.field.arrow.braindump" },
+        "2": { "name": "punctuation.separator.arrow.braindump" }
+      },
+      "end": "$",
+      "contentName": "meta.field.value.arrow.braindump",
+      "patterns": [{ "include": "#inline-overlays" }]
+    },
+
+    "kv-arrow-thin": {
+      "begin": "^\\s*([\\p{L}][\\p{L}\\p{N}_-]*(?: [\\p{L}\\p{N}_-]+)*)\\s+(->)\\s+",
+      "beginCaptures": {
+        "1": { "name": "keyword.field.dash-arrow.braindump" },
+        "2": { "name": "punctuation.separator.dash-arrow.braindump" }
+      },
+      "end": "$",
+      "contentName": "meta.field.value.dash-arrow.braindump",
       "patterns": [{ "include": "#inline-overlays" }]
     },
 
