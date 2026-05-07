@@ -63,7 +63,14 @@ export async function migrateLegacyRules(packageJSON: unknown): Promise<void> {
     !!parenPunct && !!parenContent && !!bracketPunct && !!bracketContent &&
     (parenPunct === parenContent || bracketPunct === bracketContent);
 
-  if (!missingRequired && !swapWrong) return;
+  // 1.7.0 added explicit `fontStyle: ""` on forward/back to neutralize bold
+  // inheritance from broader markup.* theme rules. If a previous save lacks it,
+  // rewrite.
+  const forwardRule = rules.find((r) => r.scope === 'markup.forward.depth-1.braindump');
+  const fontStyleMissing =
+    !forwardRule?.settings || !('fontStyle' in (forwardRule.settings as Record<string, unknown>));
+
+  if (!missingRequired && !swapWrong && !fontStyleMissing) return;
 
   const presets = buildAllPresets(packageJSON);
   const defaults = currentThemeKind() === 'light' ? presets.light : presets.original;

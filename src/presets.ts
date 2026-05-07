@@ -8,6 +8,7 @@ export type TokenId =
   | 'bulletPrimary'
   | 'listAlt'
   | 'important'
+  | 'importantBody'
   | 'forward'
   | 'back'
   | 'numbered'
@@ -71,7 +72,8 @@ export const TOKENS: TokenDef[] = [
   { id: 'bullet',        label: 'Bullet marker',     group: 'items', scope: 'keyword.bullet.depth-1.braindump',     depthAware: true,  preview: '- bullet',      previewMode: 'marker' },
   { id: 'bulletPrimary', label: 'Bullet primary',    group: 'items', scope: 'meta.list.bullet.body.braindump',      depthAware: false, preview: '- bullet body', previewMode: 'line'   },
   { id: 'listAlt',       label: 'Bullet alt',        group: 'items', scope: 'meta.list.alt.braindump',              depthAware: false, preview: '- alt row',     previewMode: 'line'   },
-  { id: 'important',     label: 'Important',         group: 'items', scope: 'keyword.priority.depth-1.braindump',   depthAware: true,  preview: '* important',   previewMode: 'marker' },
+  { id: 'important',     label: 'Important marker',  group: 'items', scope: 'keyword.priority.depth-1.braindump',   depthAware: true,  preview: '* important',   previewMode: 'marker' },
+  { id: 'importantBody', label: 'Important body',    group: 'items', scope: 'markup.priority.line.braindump',       depthAware: false, preview: '* body text',   previewMode: 'line'   },
   { id: 'forward',       label: 'Forward',           group: 'items', scope: 'markup.forward.depth-1.braindump',     depthAware: true,  preview: '> forward',     previewMode: 'line'   },
   { id: 'back',          label: 'Back',              group: 'items', scope: 'keyword.back.depth-1.braindump',       depthAware: true,  preview: '< back',        previewMode: 'line'   },
   { id: 'numbered',      label: 'Numbered primary',  group: 'items', scope: 'markup.list.numbered.braindump',       depthAware: false, preview: '1. item',       previewMode: 'line'   },
@@ -189,6 +191,7 @@ const MONO: ColorMap = {
   bulletPrimary: '#C5C2D6',
   listAlt:       '#787878',
   important:     '#D8A058',
+  importantBody: '#D8D8D8',
   forward:       '#989898',
   back:          '#989898',
   numbered:      '#989898',
@@ -229,6 +232,7 @@ const SUNSET: ColorMap = {
   bulletPrimary: '#E8D0A8',
   listAlt:       '#A88858',
   important:     '#E03820',
+  importantBody: '#E8B068',
   forward:       '#D8B068',
   back:          '#A88858',
   numbered:      '#DAA520',
@@ -269,6 +273,7 @@ const OCEAN: ColorMap = {
   bulletPrimary: '#B8C8D8',
   listAlt:       '#5C7A88',
   important:     '#D85858',
+  importantBody: '#C8B898',
   forward:       '#2A9097',
   back:          '#6B9080',
   numbered:      '#5C8F50',
@@ -336,6 +341,15 @@ function sameHex(a: string, b: string): boolean {
   return normalizeHex(a) === normalizeHex(b);
 }
 
+// fontStyle to attach to a token's emitted rules. '' clears any inherited
+// theme styling (so < and > don't appear bold from a `markup.*` rule);
+// 'bold' keeps `* important` bold even after the panel writes a foreground.
+const FONT_STYLE_BY_TOKEN: Partial<Record<TokenId, string>> = {
+  importantBody: 'bold',
+  forward: '',
+  back: '',
+};
+
 // Build the full textMateRules array for user settings: depth-1 from the user's
 // picked colors, depth-2/3 auto-derived for depth-aware tokens, plus any
 // bundled non-editable scopes (task brackets, key value, priority bold, etc.)
@@ -344,12 +358,19 @@ export function buildTextMateRules(colors: ColorMap, fixed: OutRule[] = []): Out
   const rules: OutRule[] = [];
   for (const t of TOKENS) {
     const c = colors[t.id];
-    rules.push({ scope: t.scope, settings: { foreground: c } });
+    const fs = FONT_STYLE_BY_TOKEN[t.id];
+    const mkSettings = (fg: string): { foreground: string; fontStyle?: string } => {
+      const s: { foreground: string; fontStyle?: string } = { foreground: fg };
+      if (fs !== undefined) s.fontStyle = fs;
+      return s;
+    };
+
+    rules.push({ scope: t.scope, settings: mkSettings(c) });
     if (t.depthAware) {
       const base = t.scope.replace('depth-1', 'depth-2');
       const deeper = t.scope.replace('depth-1', 'depth-3');
-      rules.push({ scope: base, settings: { foreground: darken(c, 10) } });
-      rules.push({ scope: deeper, settings: { foreground: darken(c, 20) } });
+      rules.push({ scope: base, settings: mkSettings(darken(c, 10)) });
+      rules.push({ scope: deeper, settings: mkSettings(darken(c, 20)) });
     }
     // Paren and bracket lines use a swapped two-color scheme: a paren line's
     // brackets share the bracket-content color and vice-versa. So the panel's

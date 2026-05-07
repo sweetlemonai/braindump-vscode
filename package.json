@@ -2,7 +2,7 @@
   "name": "braindump",
   "displayName": "Braindump Notes",
   "description": "Syntax highlighting for the Braindump note-taking syntax (.bd files).",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "publisher": "purple-vision",
   "license": "MIT",
   "engines": {
@@ -201,6 +201,7 @@
           {
             "scope": "markup.priority.line.braindump",
             "settings": {
+              "foreground": "#C5C2D6",
               "fontStyle": "bold"
             }
           },
@@ -242,37 +243,43 @@
           {
             "scope": "markup.forward.depth-1.braindump",
             "settings": {
-              "foreground": "#2A9097"
+              "foreground": "#2A9097",
+              "fontStyle": ""
             }
           },
           {
             "scope": "markup.forward.depth-2.braindump",
             "settings": {
-              "foreground": "#268288"
+              "foreground": "#268288",
+              "fontStyle": ""
             }
           },
           {
             "scope": "markup.forward.depth-3.braindump",
             "settings": {
-              "foreground": "#227379"
+              "foreground": "#227379",
+              "fontStyle": ""
             }
           },
           {
             "scope": "keyword.back.depth-1.braindump",
             "settings": {
-              "foreground": "#6B9080"
+              "foreground": "#6B9080",
+              "fontStyle": ""
             }
           },
           {
             "scope": "keyword.back.depth-2.braindump",
             "settings": {
-              "foreground": "#5F8273"
+              "foreground": "#5F8273",
+              "fontStyle": ""
             }
           },
           {
             "scope": "keyword.back.depth-3.braindump",
             "settings": {
-              "foreground": "#547568"
+              "foreground": "#547568",
+              "fontStyle": ""
             }
           },
           {
@@ -549,6 +556,7 @@
             {
               "scope": "markup.priority.line.braindump",
               "settings": {
+                "foreground": "#1A1A1A",
                 "fontStyle": "bold"
               }
             },
@@ -590,37 +598,43 @@
             {
               "scope": "markup.forward.depth-1.braindump",
               "settings": {
-                "foreground": "#0E7490"
+                "foreground": "#0E7490",
+                "fontStyle": ""
               }
             },
             {
               "scope": "markup.forward.depth-2.braindump",
               "settings": {
-                "foreground": "#0D6882"
+                "foreground": "#0D6882",
+                "fontStyle": ""
               }
             },
             {
               "scope": "markup.forward.depth-3.braindump",
               "settings": {
-                "foreground": "#0B5D73"
+                "foreground": "#0B5D73",
+                "fontStyle": ""
               }
             },
             {
               "scope": "keyword.back.depth-1.braindump",
               "settings": {
-                "foreground": "#2F6E5C"
+                "foreground": "#2F6E5C",
+                "fontStyle": ""
               }
             },
             {
               "scope": "keyword.back.depth-2.braindump",
               "settings": {
-                "foreground": "#2A6253"
+                "foreground": "#2A6253",
+                "fontStyle": ""
               }
             },
             {
               "scope": "keyword.back.depth-3.braindump",
               "settings": {
-                "foreground": "#25564A"
+                "foreground": "#25564A",
+                "fontStyle": ""
               }
             },
             {

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.0 — 2026-05-04
+
+- **Indentation folding restored.** The custom heading folding provider was suppressing VS Code's default indentation folding. The provider now emits both — heading ranges *and* indentation ranges — so a normal indent-deeper block becomes foldable just like in any other language.
+- **`<` / `>` no longer render bold.** Themes that style `markup.*` as bold were leaking onto our forward and back scopes. All forward (`>` `>>` `>>>`) and back (`<` `<<` `<<<`) scopes now write `fontStyle: ""` explicitly to neutralize inheritance.
+- **Editable color for `* important` body.** New "Important body" panel row lets you re-color the bold body text on `*` lines independently from the marker. The line stays bold; the foreground becomes whatever you pick.
+- Migration extended: existing customizations are rewritten on first activation when forward/back are missing the explicit `fontStyle` reset.
+
 ## 1.6.0 — 2026-05-04
 
 - **Fenced code block language highlighting.** Fenced blocks now embed the host grammar for ten languages: `typescript`/`ts`, `javascript`/`js`, `python`/`py`, `json`, `bash`/`sh`/`shell`/`zsh`, `html`, `css`, `sql`, `yaml`/`yml`, `markdown`/`md`. Unknown or bare ``` blocks render plain. Braindump tokens never bleed in.

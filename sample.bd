@@ -37,7 +37,7 @@ a thing-that-looks-like-a-token does NOT match (NEGATIVE / TRAP).
 - bullet depth 1
 -- bullet depth 2
 --- bullet depth 3
-
+ P
 * important depth 1
 ** important depth 2
 *** important depth 3
@@ -74,11 +74,11 @@ Z. uppercase z
 # ============================================================
 
 @ alice
-@bob is on the team
-Contact @carol-smith about the timeline.
-Email me at @dave too please.
+    @bob is on the team
+    Contact @carol-smith about the timeline.
+    Email me at @dave too please.
 
-! deadline Friday
+    ! deadline Friday
 ! ship by end of quarter
 
 // TODO: confirm budget with finance

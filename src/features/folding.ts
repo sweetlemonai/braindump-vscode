@@ -14,41 +14,83 @@ export class BraindumpFoldingProvider implements vscode.FoldingRangeProvider {
     _context: vscode.FoldingContext,
     _token: vscode.CancellationToken
   ): vscode.FoldingRange[] {
-    const infos: LineInfo[] = [];
-    for (let i = 0; i < document.lineCount; i++) {
-      infos.push(classify(document.lineAt(i).text));
-    }
+    return [
+      ...headingRanges(document),
+      ...indentationRanges(document),
+    ];
+  }
+}
 
-    const ranges: vscode.FoldingRange[] = [];
-    for (let i = 0; i < infos.length; i++) {
-      const info = infos[i];
-      let endLine = -1;
+// Heading-based folding: # / ## / ### lines, plus depth-1 = lines.
+function headingRanges(document: vscode.TextDocument): vscode.FoldingRange[] {
+  const infos: LineInfo[] = [];
+  for (let i = 0; i < document.lineCount; i++) {
+    infos.push(classify(document.lineAt(i).text));
+  }
 
-      if (info.kind === 'hash') {
-        endLine = infos.length - 1;
-        for (let j = i + 1; j < infos.length; j++) {
-          const next = infos[j];
-          if (next.kind === 'hash' && next.depth <= info.depth) {
-            endLine = j - 1;
-            break;
-          }
-        }
-      } else if (info.kind === 'eq1') {
-        endLine = infos.length - 1;
-        for (let j = i + 1; j < infos.length; j++) {
-          const next = infos[j];
-          if (next.kind === 'eq1' || next.kind === 'hash') {
-            endLine = j - 1;
-            break;
-          }
+  const ranges: vscode.FoldingRange[] = [];
+  for (let i = 0; i < infos.length; i++) {
+    const info = infos[i];
+    let endLine = -1;
+
+    if (info.kind === 'hash') {
+      endLine = infos.length - 1;
+      for (let j = i + 1; j < infos.length; j++) {
+        const next = infos[j];
+        if (next.kind === 'hash' && next.depth <= info.depth) {
+          endLine = j - 1;
+          break;
         }
       }
-
-      if (endLine > i) ranges.push(new vscode.FoldingRange(i, endLine));
+    } else if (info.kind === 'eq1') {
+      endLine = infos.length - 1;
+      for (let j = i + 1; j < infos.length; j++) {
+        const next = infos[j];
+        if (next.kind === 'eq1' || next.kind === 'hash') {
+          endLine = j - 1;
+          break;
+        }
+      }
     }
 
-    return ranges;
+    if (endLine > i) ranges.push(new vscode.FoldingRange(i, endLine));
   }
+
+  return ranges;
+}
+
+// Indentation-based folding — VS Code's default behavior, replicated here so
+// it survives alongside the heading provider (registering a custom provider
+// otherwise replaces the built-in indent folding).
+//
+// A line at indent N starts a fold if any subsequent line has indent > N.
+// The fold ends at the last non-blank line before indent returns to <= N.
+// Blank lines inside a block don't terminate the fold.
+function indentationRanges(document: vscode.TextDocument): vscode.FoldingRange[] {
+  const indents: (number | null)[] = [];
+  for (let i = 0; i < document.lineCount; i++) {
+    const line = document.lineAt(i);
+    indents.push(line.isEmptyOrWhitespace ? null : line.firstNonWhitespaceCharacterIndex);
+  }
+
+  const ranges: vscode.FoldingRange[] = [];
+  for (let i = 0; i < indents.length; i++) {
+    const indent = indents[i];
+    if (indent === null) continue;
+
+    let lastDeeper = -1;
+    for (let j = i + 1; j < indents.length; j++) {
+      const ji = indents[j];
+      if (ji === null) continue;
+      if (ji <= indent) break;
+      lastDeeper = j;
+    }
+
+    if (lastDeeper > i) {
+      ranges.push(new vscode.FoldingRange(i, lastDeeper));
+    }
+  }
+  return ranges;
 }
 
 function classify(text: string): LineInfo {
