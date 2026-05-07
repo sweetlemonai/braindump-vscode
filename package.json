@@ -2,7 +2,7 @@
   "name": "braindump",
   "displayName": "Braindump Notes",
   "description": "Syntax highlighting for the Braindump note-taking syntax (.bd files).",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "publisher": "purple-vision",
   "license": "MIT",
   "engines": {
@@ -95,7 +95,9 @@
     "configurationDefaults": {
       "[braindump]": {
         "editor.bracketPairColorization.enabled": false,
-        "editor.guides.bracketPairs": false
+        "editor.guides.bracketPairs": false,
+        "editor.wordWrap": "bounded",
+        "editor.unicodeHighlight.ambiguousCharacters": false
       },
       "editor.tokenColorCustomizations": {
         "textMateRules": [

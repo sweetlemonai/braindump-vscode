@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.0 — 2026-05-07
+
+- **Bounded word wrap.** `.bd` files now default to `editor.wordWrap: "bounded"` so a narrow pane wraps at the pane edge instead of producing horizontal scroll, while a wide pane still respects `editor.wordWrapColumn`.
+- **No more box around pasted prose.** `editor.unicodeHighlight.ambiguousCharacters` is disabled inside `[braindump]`, so curly apostrophes (`'`), en-dashes (`–`), and other look-alikes from copy-pasted text render cleanly without VS Code's warning rectangle.
+
 ## 1.7.0 — 2026-05-04
 
 - **Indentation folding restored.** The custom heading folding provider was suppressing VS Code's default indentation folding. The provider now emits both — heading ranges *and* indentation ranges — so a normal indent-deeper block becomes foldable just like in any other language.

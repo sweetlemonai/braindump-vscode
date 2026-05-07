@@ -7,6 +7,8 @@ Every section below either confirms a token works (POSITIVE) or confirms
 a thing-that-looks-like-a-token does NOT match (NEGATIVE / TRAP).
 
 
+It'll show up rendered
+
 # ============================================================
 # POSITIVE: Whole-line markers (depth 1 → 2 → 3)
 # ============================================================
